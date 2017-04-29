@@ -1,0 +1,6 @@
+{
+    "name": "moderator-tools",
+    "mainClass": "ch.jamiete.hilda.moderatortools.ModeratorToolsPlugin",
+    "version": "1.0.0",
+    "author": "jamietech"
+}
