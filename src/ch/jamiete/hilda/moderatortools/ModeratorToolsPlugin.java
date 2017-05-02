@@ -21,6 +21,7 @@ import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.moderatortools.commands.ArchiveCommand;
 import ch.jamiete.hilda.moderatortools.commands.ClearCommand;
 import ch.jamiete.hilda.moderatortools.commands.PurgeCommand;
+import ch.jamiete.hilda.moderatortools.listeners.FlowListener;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelDeletionOverseerTask;
 import ch.jamiete.hilda.plugins.HildaPlugin;
 
@@ -35,6 +36,8 @@ public class ModeratorToolsPlugin extends HildaPlugin {
         this.getHilda().getCommandManager().registerChannelCommand(new ArchiveCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new ClearCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new PurgeCommand(this.getHilda()));
+
+        this.getHilda().getBot().addEventListener(new FlowListener());
 
         final long first = Util.getNextMidnightInMillis("UTC") - System.currentTimeMillis();
         this.getHilda().getExecutor().scheduleAtFixedRate(new ChannelDeletionOverseerTask(this.getHilda()), first, 86400000, TimeUnit.MILLISECONDS); // At midnight then every 24 hours
