@@ -56,9 +56,16 @@ public class MuteCommand extends ChannelCommand {
                 role = guild.getController().createRole().setName("Server-wide mute").setPermissions(0).complete();
             }
 
-            if (role.getPosition() != 0) {
+            int highest = -1;
+            for (Role r : guild.getSelfMember().getRoles()) {
+                if (highest == -1 || r.getPositionRaw() > highest) {
+                    highest = r.getPositionRaw();
+                }
+            }
+
+            if (highest != -1 && role.getPosition() != highest) {
                 try {
-                    guild.getController().modifyRolePositions().selectPosition(role).moveTo(0).complete();
+                    guild.getController().modifyRolePositions(true).selectPosition(role.getPosition()).moveTo(highest - 1).complete();
                 } catch (Exception e) {
 
                 }
