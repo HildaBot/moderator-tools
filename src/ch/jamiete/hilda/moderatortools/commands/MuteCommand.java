@@ -55,6 +55,11 @@ public class MuteCommand extends ChannelCommand {
             Role role = guild.getRolesByName("Server-wide mute", false).stream().findFirst().orElse(null);
 
             if (role == null) {
+                if (!guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+                    this.reply(message, "Aborting execution; I need permission to manage roles.");
+                    return;
+                }
+
                 role = guild.getController().createRole().setName("Server-wide mute").setPermissions(0).complete();
             }
 
@@ -77,6 +82,11 @@ public class MuteCommand extends ChannelCommand {
                 PermissionOverride override = channel.getPermissionOverride(role);
 
                 if (override == null) {
+                    if (!guild.getSelfMember().hasPermission(channel, Permission.MANAGE_PERMISSIONS)) {
+                        this.reply(message, "Aborting execution; I need permission to manage permissions in " + channel.getName() + ".");
+                        return;
+                    }
+
                     override = channel.createPermissionOverride(role).setDeny(Permission.MESSAGE_WRITE).complete();
                 }
 
@@ -97,6 +107,11 @@ public class MuteCommand extends ChannelCommand {
         }
 
         if (scope == MuteScope.CHANNEL) {
+            if (!guild.getSelfMember().hasPermission(message.getTextChannel(), Permission.MANAGE_PERMISSIONS)) {
+                this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
+                return;
+            }
+
             for (User user : message.getMentionedUsers()) {
                 PermissionOverride override = message.getTextChannel().getPermissionOverride(guild.getMember(user));
 
