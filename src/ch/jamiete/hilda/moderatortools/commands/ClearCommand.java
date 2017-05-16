@@ -18,6 +18,7 @@ package ch.jamiete.hilda.moderatortools.commands;
 import org.apache.commons.lang3.StringUtils;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelClearTask;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
@@ -32,6 +33,7 @@ public class ClearCommand extends ChannelCommand {
         this.setName("clear");
         this.setMinimumPermission(Permission.MESSAGE_MANAGE);
         this.setDescription("Clear messages from the channel.");
+        this.setTranscend(CommandTranscendLevel.PERMISSION);
     }
 
     @Override

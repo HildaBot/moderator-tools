@@ -3,6 +3,7 @@ package ch.jamiete.hilda.moderatortools.commands;
 import java.util.Arrays;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -21,6 +22,7 @@ public class MuteCommand extends ChannelCommand {
         this.setAliases(Arrays.asList(new String[] { "unmute" }));
         this.setDescription("Mutes and unmutes users.");
         this.setMinimumPermission(Permission.MANAGE_CHANNEL);
+        this.setTranscend(CommandTranscendLevel.PERMISSION);
     }
 
     @Override
