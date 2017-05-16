@@ -9,7 +9,6 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.PermissionOverride;
-import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -52,56 +51,36 @@ public class MuteCommand extends ChannelCommand {
         }
 
         if (scope == MuteScope.SERVER) {
-            Role role = guild.getRolesByName("Server-wide mute", false).stream().findFirst().orElse(null);
-
-            if (role == null) {
-                if (!guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-                    this.reply(message, "Aborting execution; I need permission to manage roles.");
-                    return;
-                }
-
-                role = guild.getController().createRole().setName("Server-wide mute").setPermissions(0).complete();
-            }
-
-            int highest = -1;
-            for (Role r : guild.getSelfMember().getRoles()) {
-                if (highest == -1 || r.getPositionRaw() > highest) {
-                    highest = r.getPositionRaw();
-                }
-            }
-
-            if (highest != -1 && role.getPosition() != highest - 1) {
-                try {
-                    guild.getController().modifyRolePositions(true).selectPosition(role.getPosition()).moveTo(highest - 1).complete();
-                } catch (Exception e) {
-
-                }
-            }
-
-            for (TextChannel channel : guild.getTextChannels()) {
-                PermissionOverride override = channel.getPermissionOverride(role);
-
-                if (override == null) {
-                    if (!guild.getSelfMember().hasPermission(channel, Permission.MANAGE_PERMISSIONS)) {
-                        this.reply(message, "Aborting execution; I need permission to manage permissions in " + channel.getName() + ".");
+            for (User user : message.getMentionedUsers()) {
+                for (TextChannel channel : guild.getTextChannels()) {
+                    if (!guild.getSelfMember().hasPermission(message.getTextChannel(), Permission.MANAGE_PERMISSIONS)) {
+                        this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
                         return;
                     }
 
-                    override = channel.createPermissionOverride(role).setDeny(Permission.MESSAGE_WRITE).complete();
-                }
+                    PermissionOverride override = channel.getPermissionOverride(guild.getMember(user));
 
-                if (!override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                    override.getManager().deny(Permission.MESSAGE_WRITE).complete();
-                }
-            }
+                    if (direction == MuteDirection.MUTE) {
+                        if (override == null) {
+                            channel.createPermissionOverride(guild.getMember(user)).setDeny(Permission.MESSAGE_WRITE).queue();
+                        } else {
+                            if (!override.getDenied().contains(Permission.MESSAGE_WRITE)) {
+                                override.getManager().deny(Permission.MESSAGE_WRITE).queue();
+                            }
+                        }
+                    }
 
-            for (User user : message.getMentionedUsers()) {
-                if (direction == MuteDirection.MUTE) {
-                    guild.getController().addRolesToMember(guild.getMember(user), role).queue();
-                }
-
-                if (direction == MuteDirection.UNMUTE) {
-                    guild.getController().removeRolesFromMember(guild.getMember(user), role).queue();
+                    if (direction == MuteDirection.UNMUTE) {
+                        if (override != null) {
+                            if (override.getDenied().contains(Permission.MESSAGE_WRITE)) {
+                                if (override.getDenied().size() == 1 && override.getAllowed().size() == 0) {
+                                    override.delete().queue();
+                                } else {
+                                    override.getManager().clear(Permission.MESSAGE_WRITE).queue();
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
