@@ -63,7 +63,7 @@ public class MuteCommand extends ChannelCommand {
                 }
             }
 
-            if (highest != -1 && role.getPosition() != highest) {
+            if (highest != -1 && role.getPosition() != highest - 1) {
                 try {
                     guild.getController().modifyRolePositions(true).selectPosition(role.getPosition()).moveTo(highest - 1).complete();
                 } catch (Exception e) {
