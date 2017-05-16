@@ -20,6 +20,7 @@ import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.moderatortools.commands.ArchiveCommand;
 import ch.jamiete.hilda.moderatortools.commands.ClearCommand;
+import ch.jamiete.hilda.moderatortools.commands.MuteCommand;
 import ch.jamiete.hilda.moderatortools.commands.PurgeCommand;
 import ch.jamiete.hilda.moderatortools.listeners.FlowListener;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelDeletionOverseerTask;
@@ -35,6 +36,7 @@ public class ModeratorToolsPlugin extends HildaPlugin {
     public void onEnable() {
         this.getHilda().getCommandManager().registerChannelCommand(new ArchiveCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new ClearCommand(this.getHilda()));
+        this.getHilda().getCommandManager().registerChannelCommand(new MuteCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new PurgeCommand(this.getHilda()));
 
         this.getHilda().getBot().addEventListener(new FlowListener());
