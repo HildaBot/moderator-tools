@@ -20,7 +20,7 @@ public class MuteCommand extends ChannelCommand {
         this.setName("mute");
         this.setAliases(Arrays.asList(new String[] { "unmute" }));
         this.setDescription("Mutes and unmutes users.");
-        this.setMinimumPermission(Permission.MANAGE_CHANNEL);
+        this.setMinimumPermission(Permission.MESSAGE_MANAGE);
         this.setTranscend(CommandTranscendLevel.PERMISSION);
     }
 

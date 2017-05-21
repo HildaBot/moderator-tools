@@ -17,7 +17,6 @@ package ch.jamiete.hilda.moderatortools.commands;
 
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
-import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelDeletionTask;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -30,7 +29,6 @@ public class PurgeCommand extends ChannelCommand {
         this.setName("purge");
         this.setMinimumPermission(Permission.ADMINISTRATOR);
         this.setDescription("Purges the channel by deleting all messages.");
-        this.setTranscend(CommandTranscendLevel.PERMISSION);
     }
 
     @Override

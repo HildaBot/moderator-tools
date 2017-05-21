@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.moderatortools.ModeratorToolsPlugin;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -26,6 +27,7 @@ public class IgnoreCommand extends ChannelCommand {
         this.setAliases(Arrays.asList(new String[] { "unignore" }));
         this.setDescription("Manages ignored channels.");
         this.setMinimumPermission(Permission.ADMINISTRATOR);
+        this.setTranscend(CommandTranscendLevel.PERMISSION);
     }
 
     @Override
