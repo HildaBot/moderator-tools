@@ -63,21 +63,17 @@ public class MuteCommand extends ChannelCommand {
                     if (direction == MuteDirection.MUTE) {
                         if (override == null) {
                             channel.createPermissionOverride(guild.getMember(user)).setDeny(Permission.MESSAGE_WRITE).queue();
-                        } else {
-                            if (!override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                                override.getManager().deny(Permission.MESSAGE_WRITE).queue();
-                            }
+                        } else if (!override.getDenied().contains(Permission.MESSAGE_WRITE)) {
+                            override.getManager().deny(Permission.MESSAGE_WRITE).queue();
                         }
                     }
 
                     if (direction == MuteDirection.UNMUTE) {
-                        if (override != null) {
-                            if (override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                                if (override.getDenied().size() == 1 && override.getAllowed().size() == 0) {
-                                    override.delete().queue();
-                                } else {
-                                    override.getManager().clear(Permission.MESSAGE_WRITE).queue();
-                                }
+                        if (override != null && override.getDenied().contains(Permission.MESSAGE_WRITE)) {
+                            if (override.getDenied().size() == 1 && override.getAllowed().size() == 0) {
+                                override.delete().queue();
+                            } else {
+                                override.getManager().clear(Permission.MESSAGE_WRITE).queue();
                             }
                         }
                     }
@@ -105,13 +101,11 @@ public class MuteCommand extends ChannelCommand {
                 }
 
                 if (direction == MuteDirection.UNMUTE) {
-                    if (override != null) {
-                        if (override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                            if (override.getDenied().size() == 1 && override.getAllowed().size() == 0) {
-                                override.delete().queue();
-                            } else {
-                                override.getManager().clear(Permission.MESSAGE_WRITE).queue();
-                            }
+                    if (override != null && override.getDenied().contains(Permission.MESSAGE_WRITE)) {
+                        if (override.getDenied().size() == 1 && override.getAllowed().size() == 0) {
+                            override.delete().queue();
+                        } else {
+                            override.getManager().clear(Permission.MESSAGE_WRITE).queue();
                         }
                     }
                 }
