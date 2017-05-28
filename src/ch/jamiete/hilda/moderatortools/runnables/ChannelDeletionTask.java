@@ -77,7 +77,7 @@ public class ChannelDeletionTask implements Runnable {
 
         if (this.automatic) {
             mb.append("\n\n");
-            mb.append("I automatically cleared messages in this channel at 00:00 UTC every day.", Formatting.ITALICS);
+            mb.append("I automatically clear messages in this channel at 00:00 UTC every day.", Formatting.ITALICS);
         }
 
         this.channel.sendMessage(mb.build()).queue();
