@@ -46,10 +46,10 @@ public class ChannelClearTask implements Runnable {
     public void run() {
         Hilda.getLogger().fine("Starting to delete " + this.amount + " messages...");
 
-        while (this.amount > 0) {
-            this.channel.sendTyping().queue();
+        this.channel.sendTyping().queue();
 
-            int run = this.user == null ? 100 : this.amount;
+        while (this.amount > 0) {
+            int run = this.user == null ? this.amount : 100;
 
             if (run > 100) {
                 run = 100;
