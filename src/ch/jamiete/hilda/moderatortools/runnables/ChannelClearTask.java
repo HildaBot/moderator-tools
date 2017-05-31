@@ -49,7 +49,7 @@ public class ChannelClearTask implements Runnable {
         while (this.amount > 0) {
             this.channel.sendTyping().queue();
 
-            int run = this.amount;
+            int run = this.user == null ? 100 : this.amount;
 
             if (run > 100) {
                 run = 100;
