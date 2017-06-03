@@ -1,6 +1,8 @@
 package ch.jamiete.hilda.moderatortools.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
@@ -50,64 +52,35 @@ public class MuteCommand extends ChannelCommand {
             return;
         }
 
+        List<TextChannel> channels = new ArrayList<TextChannel>();
+
         if (scope == MuteScope.SERVER) {
-            for (User user : message.getMentionedUsers()) {
-                for (TextChannel channel : guild.getTextChannels()) {
-                    if (!guild.getSelfMember().hasPermission(message.getTextChannel(), Permission.MANAGE_PERMISSIONS)) {
-                        this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
-                        return;
-                    }
-
-                    PermissionOverride override = channel.getPermissionOverride(guild.getMember(user));
-
-                    if (direction == MuteDirection.MUTE) {
-                        if (override == null) {
-                            channel.createPermissionOverride(guild.getMember(user)).setDeny(Permission.MESSAGE_WRITE).queue();
-                        } else if (!override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                            override.getManager().deny(Permission.MESSAGE_WRITE).queue();
-                        }
-                    }
-
-                    if (direction == MuteDirection.UNMUTE) {
-                        if (override != null && override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                            if (override.getDenied().size() == 1 && override.getAllowed().size() == 0) {
-                                override.delete().queue();
-                            } else {
-                                override.getManager().clear(Permission.MESSAGE_WRITE).queue();
-                            }
-                        }
-                    }
-                }
-            }
+            channels.addAll(guild.getTextChannels());
         }
 
         if (scope == MuteScope.CHANNEL) {
-            if (!guild.getSelfMember().hasPermission(message.getTextChannel(), Permission.MANAGE_PERMISSIONS)) {
-                this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
-                return;
-            }
+            channels.add(message.getTextChannel());
+        }
 
-            for (User user : message.getMentionedUsers()) {
-                PermissionOverride override = message.getTextChannel().getPermissionOverride(guild.getMember(user));
+        for (User user : message.getMentionedUsers()) {
+            for (TextChannel channel : channels) {
+                if (!guild.getSelfMember().hasPermission(message.getTextChannel(), Permission.MANAGE_PERMISSIONS)) {
+                    this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
+                    return;
+                }
 
-                if (direction == MuteDirection.MUTE) {
+                PermissionOverride override = channel.getPermissionOverride(guild.getMember(user));
+
+                if (direction == MuteDirection.MUTE && channel.canTalk(guild.getMember(user))) {
                     if (override == null) {
-                        message.getTextChannel().createPermissionOverride(guild.getMember(user)).setDeny(Permission.MESSAGE_WRITE).queue();
+                        channel.createPermissionOverride(guild.getMember(user)).setDeny(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION).queue();
                     } else {
-                        if (!override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                            override.getManager().deny(Permission.MESSAGE_WRITE).queue();
-                        }
+                        override.getManager().deny(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION).queue();
                     }
                 }
 
-                if (direction == MuteDirection.UNMUTE) {
-                    if (override != null && override.getDenied().contains(Permission.MESSAGE_WRITE)) {
-                        if (override.getDenied().size() == 1 && override.getAllowed().size() == 0) {
-                            override.delete().queue();
-                        } else {
-                            override.getManager().clear(Permission.MESSAGE_WRITE).queue();
-                        }
-                    }
+                if (direction == MuteDirection.UNMUTE && override != null) {
+                    override.getManager().clear(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION).queue();
                 }
             }
         }
