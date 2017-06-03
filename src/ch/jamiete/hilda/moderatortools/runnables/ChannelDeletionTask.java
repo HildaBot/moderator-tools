@@ -15,7 +15,10 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.runnables;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import ch.jamiete.hilda.Hilda;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -27,7 +30,10 @@ import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 
 public class ChannelDeletionTask implements Runnable {
     private final TextChannel channel;
+    private Message message;
     private final boolean automatic;
+    private final long start = System.currentTimeMillis();
+    private long last = 0;
 
     public ChannelDeletionTask(final TextChannel channel) {
         this(channel, false);
@@ -42,13 +48,20 @@ public class ChannelDeletionTask implements Runnable {
     public void run() {
         Hilda.getLogger().info("Automatically clearing " + this.channel.getName() + " " + this.channel.getId());
 
-        this.channel.sendMessage("Channel being automatically cleared...").queue();
+        this.channel.sendMessage("Channel being automatically cleared...").queue(m -> this.message = m);
         this.channel.sendTyping().queue();
 
         final MessageHistory history = this.channel.getHistory();
         Hilda.getLogger().fine("Getting first history...");
 
         while (true) {
+            if (this.message != null && System.currentTimeMillis() - this.start <= 15000 && System.currentTimeMillis() - this.last <= 15000) {
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm.ss");
+                sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+                this.message.editMessage("Channel still being automatically cleared as at " + sdf.format(new Date()) + " GMT+0").queue();
+                this.last = System.currentTimeMillis();
+            }
+
             Hilda.getLogger().fine("Getting 100 messages");
             final List<Message> messages = history.retrievePast(100).complete().stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
