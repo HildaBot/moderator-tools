@@ -29,7 +29,7 @@ public class MuteCommand extends ChannelCommand {
     @Override
     public void execute(Message message, String[] arguments, String label) {
         if (arguments.length == 0) {
-            this.usage(message, "[server/channel] <users>", label);
+            this.usage(message, "[server/channel] <user...>", label);
             return;
         }
 
@@ -53,6 +53,7 @@ public class MuteCommand extends ChannelCommand {
         }
 
         List<TextChannel> channels = new ArrayList<TextChannel>();
+        List<Permission> deny = Arrays.asList(new Permission[] { Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION });
 
         if (scope == MuteScope.SERVER) {
             channels.addAll(guild.getTextChannels());
@@ -73,14 +74,20 @@ public class MuteCommand extends ChannelCommand {
 
                 if (direction == MuteDirection.MUTE && channel.canTalk(guild.getMember(user))) {
                     if (override == null) {
-                        channel.createPermissionOverride(guild.getMember(user)).setDeny(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION).queue();
+                        channel.createPermissionOverride(guild.getMember(user)).setDeny(deny).queue();
                     } else {
-                        override.getManager().deny(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION).queue();
+                        override.getManager().deny(deny).queue();
                     }
                 }
 
                 if (direction == MuteDirection.UNMUTE && override != null) {
-                    override.getManager().clear(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION).queue();
+                    List<Permission> denied = override.getDenied();
+
+                    if (denied.size() == 2 && denied.containsAll(deny) && override.getAllowed().size() == 0) {
+                        override.delete().queue();
+                    } else {
+                        override.getManager().clear(deny).queue();
+                    }
                 }
             }
         }
