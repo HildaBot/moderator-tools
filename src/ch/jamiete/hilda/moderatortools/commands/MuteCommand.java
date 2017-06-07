@@ -3,9 +3,11 @@ package ch.jamiete.hilda.moderatortools.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -52,6 +54,9 @@ public class MuteCommand extends ChannelCommand {
             return;
         }
 
+        List<User> affected = new ArrayList<User>();
+        affected.addAll(message.getMentionedUsers().stream().filter(u -> member.canInteract(guild.getMember(u)) && u != member.getUser()).collect(Collectors.toList()));
+
         List<TextChannel> channels = new ArrayList<TextChannel>();
         List<Permission> deny = Arrays.asList(new Permission[] { Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION });
 
@@ -63,7 +68,7 @@ public class MuteCommand extends ChannelCommand {
             channels.add(message.getTextChannel());
         }
 
-        for (User user : message.getMentionedUsers()) {
+        for (User user : affected) {
             for (TextChannel channel : channels) {
                 if (!guild.getSelfMember().hasPermission(message.getTextChannel(), Permission.MANAGE_PERMISSIONS)) {
                     this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
@@ -92,7 +97,40 @@ public class MuteCommand extends ChannelCommand {
             }
         }
 
-        this.reply(message, ":speak_no_evil: I've " + direction.name().toLowerCase() + "d " + (message.getMentionedUsers().size() == 1 ? "that user" : "those users") + " from the " + scope.name().toLowerCase() + "!");
+        MessageBuilder mb = new MessageBuilder();
+
+        mb.append(":speak_no_evil: I've ").append(direction.name().toLowerCase()).append("d ");
+        mb.append(this.getUsersAsString(affected));
+        mb.append(" from the ").append(scope.name().toLowerCase()).append("!");
+
+        if (message.getMentionedUsers().size() > affected.size()) {
+            int unaffected = message.getMentionedUsers().size() - affected.size();
+            mb.append(" I didn't mute ").append(unaffected).append(" ").append(unaffected == 1 ? "user" : "users");
+            mb.append(" because you didn't have permission. ");
+            mb.append(this.getUsersAsString(message.getMentionedUsers().stream().filter(u -> !affected.contains(u)).collect(Collectors.toList())));
+            mb.append(" ");
+            mb.append(unaffected == 1 ? "remains" : "remain");
+            mb.append(" unmuted.");
+        }
+
+        this.reply(message, mb.build());
+    }
+
+    private String getUsersAsString(final List<User> users) {
+        StringBuilder sb = new StringBuilder();
+
+        if (users.size() == 1) {
+            sb.append(users.get(0).getAsMention());
+        } else {
+            for (User user : users.subList(0, users.size() - 1)) {
+                sb.append(user.getAsMention()).append(", ");
+            }
+
+            sb.setLength(sb.length() - 2);
+            sb.append(" and ").append(users.get(users.size() - 1).getAsMention());
+        }
+
+        return sb.toString();
     }
 
     private enum MuteDirection {
