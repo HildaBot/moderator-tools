@@ -15,13 +15,19 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.commands;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Random;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.CommandManager;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelDeletionTask;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 
 public class PurgeCommand extends ChannelCommand {
+    private HashMap<Long, String> keys = (HashMap<Long, String>) Collections.synchronizedMap(new HashMap<Long, String>());
 
     public PurgeCommand(final Hilda hilda) {
         super(hilda);
@@ -38,7 +44,52 @@ public class PurgeCommand extends ChannelCommand {
             return;
         }
 
+        if (arguments.length == 0) {
+            String id = this.getFreshID();
+            this.keys.put(message.getMember().getUser().getIdLong(), id);
+            this.reply(message, "Are you sure you want to purge **the entire history** of this channel? To continue, say `" + CommandManager.PREFIX + label + " " + id + "`");
+            return;
+        }
+
+        if (!this.keys.containsKey(message.getMember().getUser().getIdLong())) {
+            this.reply(message, "You must first run the command without arguments to generate a confirmation key.");
+            return;
+        }
+
+        if (!this.keys.get(message.getMember().getUser().getIdLong()).equalsIgnoreCase(arguments[0])) {
+            this.reply(message, "I don't recognise that confirmation key. Please use the confirmation key you were given or generate a new one.");
+            return;
+        }
+
+        this.keys.remove(message.getMember().getUser().getIdLong());
         this.hilda.getExecutor().execute(new ChannelDeletionTask(message.getTextChannel()));
+    }
+
+    private String getFreshID() {
+        final String alphabet = "abcdefghijkmnpqrstuvwxyz";
+        final String numbers = "23456789";
+        final Random random = new Random();
+
+        String possibleid = "";
+
+        for (int i = 0; i < 8; i++) {
+            if (random.nextBoolean()) {
+                possibleid += String.valueOf(alphabet.charAt(random.nextInt(alphabet.length())));
+            } else {
+                possibleid += String.valueOf(numbers.charAt(random.nextInt(numbers.length())));
+            }
+        }
+
+        synchronized (this.keys) {
+            for (Entry<Long, String> entry : this.keys.entrySet()) {
+                if (entry.getValue().equals(possibleid)) {
+                    possibleid = null;
+                    continue;
+                }
+            }
+        }
+
+        return possibleid == null ? this.getFreshID() : possibleid;
     }
 
 }
