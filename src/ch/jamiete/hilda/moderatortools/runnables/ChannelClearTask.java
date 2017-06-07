@@ -67,7 +67,12 @@ public class ChannelClearTask implements Runnable {
 
             try {
                 if (this.user != null) {
-                    final List<Message> relevant = messages.stream().filter(message -> message.getAuthor() == this.user).collect(Collectors.toList());
+                    List<Message> relevant = messages.stream().filter(message -> message.getAuthor() == this.user).collect(Collectors.toList());
+
+                    if (relevant.size() > this.amount) {
+                        relevant = relevant.subList(0, this.amount - 1);
+                    }
+
                     this.channel.deleteMessages(relevant).complete();
                     this.amount -= relevant.size();
 
