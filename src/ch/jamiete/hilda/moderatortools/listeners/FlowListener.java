@@ -1,13 +1,13 @@
 package ch.jamiete.hilda.moderatortools.listeners;
 
+import ch.jamiete.hilda.events.EventHandler;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public class FlowListener extends ListenerAdapter {
+public class FlowListener {
 
-    @Override
+    @EventHandler
     public void onGuildMemberJoin(final GuildMemberJoinEvent event) {
         for (final TextChannel channel : event.getGuild().getTextChannels()) {
             if (channel.getTopic() != null && channel.getTopic().toLowerCase().contains("[flow]")) {
@@ -16,7 +16,7 @@ public class FlowListener extends ListenerAdapter {
         }
     }
 
-    @Override
+    @EventHandler
     public void onGuildMemberLeave(final GuildMemberLeaveEvent event) {
         for (final TextChannel channel : event.getGuild().getTextChannels()) {
             if (channel.getTopic() != null && channel.getTopic().toLowerCase().contains("[flow]")) {
