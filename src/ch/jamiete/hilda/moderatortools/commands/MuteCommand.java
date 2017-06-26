@@ -105,12 +105,12 @@ public class MuteCommand extends ChannelCommand {
 
         if (message.getMentionedUsers().size() > affected.size()) {
             int unaffected = message.getMentionedUsers().size() - affected.size();
-            mb.append(" I didn't mute ").append(unaffected).append(" ").append(unaffected == 1 ? "user" : "users");
-            mb.append(" because you didn't have permission. ");
+            mb.append(" I didn't ").append(direction.name().toLowerCase()).append(" ");
+            mb.append(unaffected).append(" ").append(unaffected == 1 ? "user" : "users");
+            mb.append(" because you don't have permission. ");
             mb.append(this.getUsersAsString(message.getMentionedUsers().stream().filter(u -> !affected.contains(u)).collect(Collectors.toList())));
-            mb.append(" ");
-            mb.append(unaffected == 1 ? "remains" : "remain");
-            mb.append(" unmuted.");
+            mb.append(" ").append(unaffected == 1 ? "remains" : "remain").append(" ");
+            mb.append(direction.name().toLowerCase()).append("d.");
         }
 
         this.reply(message, mb.build());
@@ -118,6 +118,10 @@ public class MuteCommand extends ChannelCommand {
 
     private String getUsersAsString(final List<User> users) {
         StringBuilder sb = new StringBuilder();
+
+        if (users.size() == 0) {
+            return "";
+        }
 
         if (users.size() == 1) {
             sb.append(users.get(0).getAsMention());
