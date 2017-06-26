@@ -99,9 +99,13 @@ public class MuteCommand extends ChannelCommand {
 
         MessageBuilder mb = new MessageBuilder();
 
-        mb.append(":speak_no_evil: I've ").append(direction.name().toLowerCase()).append("d ");
-        mb.append(this.getUsersAsString(affected));
-        mb.append(" from the ").append(scope.name().toLowerCase()).append("!");
+        mb.append(":speak_no_evil:");
+
+        if (affected.size() > 0) {
+            mb.append(" I've ").append(direction.name().toLowerCase()).append("d ");
+            mb.append(this.getUsersAsString(affected));
+            mb.append(" from the ").append(scope.name().toLowerCase()).append("!");
+        }
 
         if (message.getMentionedUsers().size() > affected.size()) {
             int unaffected = message.getMentionedUsers().size() - affected.size();
