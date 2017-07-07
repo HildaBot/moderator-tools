@@ -35,6 +35,11 @@ public class MuteCommand extends ChannelCommand {
             return;
         }
 
+        if (arguments[0].equalsIgnoreCase("list")) {
+            this.hilda.getCommandManager().getChannelCommand("mutelist").execute(message, Arrays.copyOfRange(arguments, 1, arguments.length), "mute list");
+            return;
+        }
+
         Guild guild = message.getGuild();
         Member member = guild.getMember(message.getAuthor());
         MuteScope scope = MuteScope.CHANNEL;
