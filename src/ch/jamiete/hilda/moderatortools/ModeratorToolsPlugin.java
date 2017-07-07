@@ -24,6 +24,7 @@ import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.moderatortools.commands.ArchiveCommand;
 import ch.jamiete.hilda.moderatortools.commands.ClearCommand;
+import ch.jamiete.hilda.moderatortools.commands.FlowCommand;
 import ch.jamiete.hilda.moderatortools.commands.IgnoreCommand;
 import ch.jamiete.hilda.moderatortools.commands.MuteCommand;
 import ch.jamiete.hilda.moderatortools.commands.MuteListCommand;
@@ -44,13 +45,14 @@ public class ModeratorToolsPlugin extends HildaPlugin {
     public void onEnable() {
         this.getHilda().getCommandManager().registerChannelCommand(new ArchiveCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new ClearCommand(this.getHilda()));
+        this.getHilda().getCommandManager().registerChannelCommand(new FlowCommand(this.getHilda(), this));
         this.getHilda().getCommandManager().registerChannelCommand(new IgnoreCommand(this.getHilda(), this));
         this.getHilda().getCommandManager().registerChannelCommand(new MuteCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new MuteListCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new PurgeCommand(this.getHilda()));
 
         this.getHilda().getBot().addEventListener(new AnnouncementsListener());
-        this.getHilda().getBot().addEventListener(new FlowListener());
+        this.getHilda().getBot().addEventListener(new FlowListener(this.getHilda(), this));
 
         final long first = Util.getNextMidnightInMillis("UTC") - System.currentTimeMillis();
         this.getHilda().getExecutor().scheduleAtFixedRate(new ChannelDeletionOverseerTask(this.getHilda()), first, 86400000, TimeUnit.MILLISECONDS); // At midnight then every 24 hours
