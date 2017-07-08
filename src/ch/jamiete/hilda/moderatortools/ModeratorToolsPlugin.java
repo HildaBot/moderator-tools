@@ -29,6 +29,8 @@ import ch.jamiete.hilda.moderatortools.commands.IgnoreCommand;
 import ch.jamiete.hilda.moderatortools.commands.MuteCommand;
 import ch.jamiete.hilda.moderatortools.commands.MuteListCommand;
 import ch.jamiete.hilda.moderatortools.commands.PurgeCommand;
+import ch.jamiete.hilda.moderatortools.commands.ServerinfoCommand;
+import ch.jamiete.hilda.moderatortools.commands.UserinfoCommand;
 import ch.jamiete.hilda.moderatortools.listeners.AnnouncementsListener;
 import ch.jamiete.hilda.moderatortools.listeners.FlowListener;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelDeletionOverseerTask;
@@ -50,6 +52,8 @@ public class ModeratorToolsPlugin extends HildaPlugin {
         this.getHilda().getCommandManager().registerChannelCommand(new MuteCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new MuteListCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new PurgeCommand(this.getHilda()));
+        this.getHilda().getCommandManager().registerChannelCommand(new ServerinfoCommand(this.getHilda()));
+        this.getHilda().getCommandManager().registerChannelCommand(new UserinfoCommand(this.getHilda()));
 
         this.getHilda().getBot().addEventListener(new AnnouncementsListener());
         this.getHilda().getBot().addEventListener(new FlowListener(this.getHilda(), this));
