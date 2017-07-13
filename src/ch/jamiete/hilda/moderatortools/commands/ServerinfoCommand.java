@@ -118,11 +118,11 @@ public class ServerinfoCommand extends ChannelCommand {
             eb.addField("Ten newest members", Util.getAsList(newestnames), false);
         }
 
-        String verification = WordUtils.capitalize(guild.getVerificationLevel().name().toLowerCase());
+        String verification = WordUtils.capitalize(guild.getVerificationLevel().name().toLowerCase().replace("_", ""));
         verification += " (";
         switch (guild.getVerificationLevel()) {
             case HIGH:
-                verification += "Users must be members for 10 minutes before talking.";
+                verification += "Users must be members for at least 10 minutes before talking.";
                 break;
 
             case LOW:
@@ -130,7 +130,7 @@ public class ServerinfoCommand extends ChannelCommand {
                 break;
 
             case MEDIUM:
-                verification += "Users must be members for 5 minutes before talking.";
+                verification += "Users must be registered on Discord for at least 5 minutes.";
                 break;
 
             case NONE:
@@ -148,7 +148,7 @@ public class ServerinfoCommand extends ChannelCommand {
         verification += ")";
         eb.addField("Verification level", verification, false);
 
-        eb.addField("Explicit content filter level", WordUtils.capitalize(guild.getExplicitContentLevel().name().toLowerCase()) + " (" + guild.getExplicitContentLevel().getDescription() + ")", false);
+        eb.addField("Explicit content filter level", WordUtils.capitalize(guild.getExplicitContentLevel().name().toLowerCase().replace("_", "")) + " (" + guild.getExplicitContentLevel().getDescription() + ")", false);
         eb.addField("Owner", Util.getName(guild.getOwner()), false);
 
         this.reply(message, eb.build());

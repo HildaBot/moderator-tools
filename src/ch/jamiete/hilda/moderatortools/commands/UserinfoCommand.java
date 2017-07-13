@@ -94,7 +94,7 @@ public class UserinfoCommand extends ChannelCommand {
             }
 
             eb.addField("Shared servers", String.valueOf(user.getMutualGuilds().size()), false);
-            eb.addField("Online status", WordUtils.capitalize(member.getOnlineStatus().toString().toLowerCase()), false);
+            eb.addField("Online status", WordUtils.capitalize(member.getOnlineStatus().toString().toLowerCase().replace("_", "")), false);
 
             if (member.getGame() != null) {
                 String value = member.getGame().getName();
