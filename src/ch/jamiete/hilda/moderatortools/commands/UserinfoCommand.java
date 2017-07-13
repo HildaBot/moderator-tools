@@ -17,6 +17,8 @@ package ch.jamiete.hilda.moderatortools.commands;
 
 import java.awt.Color;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.text.WordUtils;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
@@ -40,12 +42,18 @@ public class UserinfoCommand extends ChannelCommand {
 
     @Override
     public void execute(final Message message, final String[] arguments, final String label) {
-        if (message.getMentionedUsers().isEmpty()) {
-            this.usage(message, "<@user...>", label);
+        final List<User> tocheck = new ArrayList<User>();
+
+        if (arguments.length == 0) {
+            tocheck.add(message.getAuthor());
+        } else if (message.getMentionedUsers().isEmpty()) {
+            this.usage(message, "[@user...]", label);
             return;
+        } else {
+            tocheck.addAll(message.getMentionedUsers());
         }
 
-        for (User user : message.getMentionedUsers()) {
+        for (User user : tocheck) {
             final Member member = message.getGuild().getMember(user);
             final EmbedBuilder eb = new EmbedBuilder();
 
