@@ -31,7 +31,19 @@ public class FlowUpdater {
                 members.add(new FlowMember(member));
             }
 
-            final FileOutputStream stream = new FileOutputStream("flow/" + guild.getId() + ".hildausers", false);
+            final File folder = new File("data");
+
+            if (!folder.isDirectory()) {
+                folder.mkdir();
+            }
+
+            final File file = new File(folder, "flow-" + guild.getId() + ".hildausers");
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            final FileOutputStream stream = new FileOutputStream(file, false);
             final ObjectOutputStream obj = new ObjectOutputStream(stream);
 
             obj.writeObject(members);
@@ -50,12 +62,18 @@ public class FlowUpdater {
             return;
         }
 
-        File list = new File("flow/" + guild.getId() + ".hildausers");
-        Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + guild.getId());
+        final File list = new File("data/flow-" + guild.getId() + ".hildausers");
+        final Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + guild.getId());
+
+        if (!list.exists()) {
+            return;
+        }
 
         try {
             final FileInputStream stream = new FileInputStream(list);
             final ObjectInputStream obj = new ObjectInputStream(stream);
+
+            int differences = 0;
 
             @SuppressWarnings("unchecked")
             final ArrayList<FlowMember> members = (ArrayList<FlowMember>) obj.readObject();
@@ -70,6 +88,7 @@ public class FlowUpdater {
                 }
 
                 if (member == null) {
+                    differences++;
                     FlowListener.sendMessage(guild, FlowListener.compute(cfg.getString("leave", FlowListener.DEFAULT_LEAVE), putative));
                 }
             }
@@ -78,6 +97,7 @@ public class FlowUpdater {
                 boolean waspresent = members.stream().anyMatch(m -> m.id.equals(member.getUser().getId()));
 
                 if (!waspresent) {
+                    differences++;
                     FlowListener.sendMessage(guild, FlowListener.compute(cfg.getString("join", FlowListener.DEFAULT_JOIN), member));
                 }
             }
@@ -86,6 +106,8 @@ public class FlowUpdater {
             stream.close();
 
             list.delete();
+
+            Hilda.getLogger().info("Loaded flow information for " + guild.getName() + " (" + guild.getId() + ") and found " + differences + " differences");
         } catch (Exception e) {
             Hilda.getLogger().log(Level.WARNING, "Failed to check flow of " + guild.getName() + " (" + guild.getId() + ").", e);
         }
