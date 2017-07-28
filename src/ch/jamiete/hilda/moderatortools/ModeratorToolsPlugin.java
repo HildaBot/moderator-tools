@@ -38,9 +38,12 @@ import ch.jamiete.hilda.plugins.HildaPlugin;
 import net.dv8tion.jda.core.entities.Guild;
 
 public class ModeratorToolsPlugin extends HildaPlugin {
+    private FlowUpdater updater;
 
     public ModeratorToolsPlugin(final Hilda hilda) {
         super(hilda);
+
+        this.updater = new FlowUpdater(hilda, this);
     }
 
     @Override
@@ -75,6 +78,15 @@ public class ModeratorToolsPlugin extends HildaPlugin {
 
                 Hilda.getLogger().info("Ignored " + array.size() + " channels in " + guild.getName());
             }
+
+            this.updater.check(guild);
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        for (Guild guild : this.getHilda().getBot().getGuilds()) {
+            this.updater.save(guild);
         }
     }
 
