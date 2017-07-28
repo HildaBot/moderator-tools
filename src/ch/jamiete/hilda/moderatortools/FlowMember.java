@@ -1,8 +1,10 @@
 package ch.jamiete.hilda.moderatortools;
 
+import java.io.Serializable;
 import net.dv8tion.jda.core.entities.Member;
 
-public class FlowMember {
+public class FlowMember implements Serializable {
+    private static final long serialVersionUID = -1L;
     public String id;
     public String nickname;
     public String username;
