@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import ch.jamiete.hilda.Hilda;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import ch.jamiete.hilda.configuration.Configuration;
@@ -101,15 +102,8 @@ public class IgnoreCommand extends ChannelCommand {
 
         MessageBuilder mb = new MessageBuilder();
 
-        mb.append("OK! I'm ").append(direction == IgnoreDirection.IGNORE ? "now" : "no longer").append(" ignoring ");
-
-        if (channels.size() == 1) {
-            mb.append(channels.get(0).getAsMention());
-        } else {
-            channels.forEach(c -> mb.append(c.getAsMention() + ", "));
-            mb.replaceLast(", ", "");
-        }
-
+        mb.append("OK, I'm ").append(direction == IgnoreDirection.IGNORE ? "now" : "no longer").append(" ignoring ");
+        mb.append(Util.getChannelsAsString(channels));
         mb.append(".");
 
         mb.buildAll().forEach(m -> message.getChannel().sendMessage(m).queue());
