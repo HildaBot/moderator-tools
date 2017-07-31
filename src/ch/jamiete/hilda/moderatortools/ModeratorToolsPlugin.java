@@ -90,4 +90,11 @@ public class ModeratorToolsPlugin extends HildaPlugin {
         }
     }
 
+    @Override
+    public void save() {
+        for (Guild guild : this.getHilda().getBot().getGuilds()) {
+            this.updater.save(guild);
+        }
+    }
+
 }
