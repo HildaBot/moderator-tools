@@ -119,7 +119,7 @@ public class MuteCommand extends ChannelCommand {
             mb.append(" because you don't have permission. ");
             mb.append(this.getUsersAsString(message.getMentionedUsers().stream().filter(u -> !affected.contains(u)).collect(Collectors.toList())));
             mb.append(" ").append(unaffected == 1 ? "remains" : "remain").append(" ");
-            mb.append(direction.name().toLowerCase()).append("d.");
+            mb.append(direction.inverse().name().toLowerCase()).append("d.");
         }
 
         this.reply(message, mb.build());
@@ -148,6 +148,18 @@ public class MuteCommand extends ChannelCommand {
 
     private enum MuteDirection {
         MUTE, UNMUTE;
+
+        public MuteDirection inverse() {
+            switch (this) {
+                case MUTE:
+                    return UNMUTE;
+
+                case UNMUTE:
+                    return MUTE;
+            }
+
+            return null;
+        }
     }
 
     private enum MuteScope {
