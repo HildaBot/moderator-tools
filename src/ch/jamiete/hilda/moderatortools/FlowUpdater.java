@@ -24,6 +24,10 @@ public class FlowUpdater {
     }
 
     public void save(Guild guild) {
+        if (!this.shouldCheck(guild)) {
+            return;
+        }
+
         try {
             List<FlowMember> members = new ArrayList<FlowMember>();
 
