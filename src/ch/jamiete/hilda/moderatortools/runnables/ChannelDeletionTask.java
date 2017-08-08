@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 import ch.jamiete.hilda.Hilda;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
@@ -63,7 +62,10 @@ public class ChannelDeletionTask implements Runnable {
             }
 
             Hilda.getLogger().fine("Getting 100 messages");
-            final List<Message> messages = history.retrievePast(100).complete().stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
+            final List<Message> messages = history.retrievePast(100).complete();
+
+            boolean end = messages.size() < 100;
+            messages.removeIf(m -> m.isPinned());
 
             if (messages.isEmpty()) {
                 break;
@@ -77,7 +79,7 @@ public class ChannelDeletionTask implements Runnable {
                 break;
             }
 
-            if (messages.size() < 100) {
+            if (end) {
                 break;
             }
         }
