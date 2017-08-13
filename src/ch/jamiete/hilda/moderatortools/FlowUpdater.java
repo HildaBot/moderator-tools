@@ -52,7 +52,7 @@ public class FlowUpdater {
 
             obj.writeObject(members);
 
-            Hilda.getLogger().info("Saved " + members.size() + " members to disk for " + guild.getId());
+            Hilda.getLogger().fine("Saved " + members.size() + " members to disk for " + guild.getId());
 
             obj.close();
             stream.close();
