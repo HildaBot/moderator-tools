@@ -53,7 +53,7 @@ public class ServerinfoCommand extends ChannelCommand {
 
         eb.addField("Server ID", guild.getId(), false);
         eb.addField("Server created on", guild.getCreationTime().format(this.dtf), false);
-        eb.addField("Default text channel", guild.getPublicChannel().getAsMention(), false);
+        eb.addField("Default text channel", guild.getDefaultChannel().getAsMention(), false);
 
         String channels = "";
         channels += guild.getTextChannels().size() + " text ";
