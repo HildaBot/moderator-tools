@@ -75,12 +75,12 @@ public class ServerinfoCommand extends ChannelCommand {
         eb.addField("Members", members, false);
 
         if (guild.getMembers().size() > 50) {
-            List<Member> oldest = guild.getMembers().stream().sorted(new Comparator<Member>() {
+            final List<Member> oldest = guild.getMembers().stream().sorted(new Comparator<Member>() {
 
                 @Override
-                public int compare(Member one, Member two) {
-                    long onetime = System.currentTimeMillis() - one.getJoinDate().toInstant().toEpochMilli();
-                    long twotime = System.currentTimeMillis() - two.getJoinDate().toInstant().toEpochMilli();
+                public int compare(final Member one, final Member two) {
+                    final long onetime = System.currentTimeMillis() - one.getJoinDate().toInstant().toEpochMilli();
+                    final long twotime = System.currentTimeMillis() - two.getJoinDate().toInstant().toEpochMilli();
 
                     if (onetime == twotime) {
                         return 0;
@@ -92,16 +92,16 @@ public class ServerinfoCommand extends ChannelCommand {
                 }
 
             }).limit(10).collect(Collectors.toList());
-            List<String> oldestnames = new ArrayList<String>(oldest.size());
+            final List<String> oldestnames = new ArrayList<String>(oldest.size());
             oldest.forEach(m -> oldestnames.add(Util.getName(m)));
             eb.addField("Ten oldest members", Util.getAsList(oldestnames), false);
 
-            List<Member> newest = guild.getMembers().stream().sorted(new Comparator<Member>() {
+            final List<Member> newest = guild.getMembers().stream().sorted(new Comparator<Member>() {
 
                 @Override
-                public int compare(Member one, Member two) {
-                    long onetime = System.currentTimeMillis() - one.getJoinDate().toInstant().toEpochMilli();
-                    long twotime = System.currentTimeMillis() - two.getJoinDate().toInstant().toEpochMilli();
+                public int compare(final Member one, final Member two) {
+                    final long onetime = System.currentTimeMillis() - one.getJoinDate().toInstant().toEpochMilli();
+                    final long twotime = System.currentTimeMillis() - two.getJoinDate().toInstant().toEpochMilli();
 
                     if (onetime == twotime) {
                         return 0;
@@ -113,7 +113,7 @@ public class ServerinfoCommand extends ChannelCommand {
                 }
 
             }).limit(10).collect(Collectors.toList());
-            List<String> newestnames = new ArrayList<String>(newest.size());
+            final List<String> newestnames = new ArrayList<String>(newest.size());
             newest.forEach(m -> newestnames.add(Util.getName(m)));
             eb.addField("Ten newest members", Util.getAsList(newestnames), false);
         }

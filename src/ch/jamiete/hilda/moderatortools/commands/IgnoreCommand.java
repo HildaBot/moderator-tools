@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2017 jamietech
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.commands;
 
 import java.util.ArrayList;
@@ -17,9 +32,13 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 public class IgnoreCommand extends ChannelCommand {
-    private ModeratorToolsPlugin plugin;
+    private enum IgnoreDirection {
+        IGNORE, UNIGNORE;
+    }
 
-    public IgnoreCommand(Hilda hilda, ModeratorToolsPlugin plugin) {
+    private final ModeratorToolsPlugin plugin;
+
+    public IgnoreCommand(final Hilda hilda, final ModeratorToolsPlugin plugin) {
         super(hilda);
 
         this.plugin = plugin;
@@ -32,14 +51,14 @@ public class IgnoreCommand extends ChannelCommand {
     }
 
     @Override
-    public void execute(Message message, String[] arguments, String label) {
+    public void execute(final Message message, final String[] arguments, final String label) {
         if (arguments.length == 1 && arguments[0].equalsIgnoreCase("list")) {
-            MessageBuilder mb = new MessageBuilder();
-            List<String> strings = this.hilda.getCommandManager().getIgnoredChannels();
-            List<TextChannel> ignored = new ArrayList<TextChannel>();
+            final MessageBuilder mb = new MessageBuilder();
+            final List<String> strings = this.hilda.getCommandManager().getIgnoredChannels();
+            final List<TextChannel> ignored = new ArrayList<TextChannel>();
 
-            for (String s : strings) {
-                TextChannel c = message.getGuild().getTextChannelById(s);
+            for (final String s : strings) {
+                final TextChannel c = message.getGuild().getTextChannelById(s);
 
                 if (c != null) {
                     ignored.add(c);
@@ -51,7 +70,7 @@ public class IgnoreCommand extends ChannelCommand {
             } else {
                 mb.append("I'm currently ignoring ");
 
-                for (TextChannel c : ignored) {
+                for (final TextChannel c : ignored) {
                     mb.append(c.getAsMention());
                     mb.append(", ");
                 }
@@ -64,8 +83,8 @@ public class IgnoreCommand extends ChannelCommand {
             return;
         }
 
-        IgnoreDirection direction = IgnoreDirection.valueOf(label.toUpperCase());
-        List<TextChannel> channels = new ArrayList<TextChannel>();
+        final IgnoreDirection direction = IgnoreDirection.valueOf(label.toUpperCase());
+        final List<TextChannel> channels = new ArrayList<TextChannel>();
 
         if (arguments.length == 0) {
             channels.add(message.getTextChannel());
@@ -75,14 +94,14 @@ public class IgnoreCommand extends ChannelCommand {
             channels.addAll(message.getMentionedChannels());
         }
 
-        Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "ignore-" + message.getGuild().getId());
+        final Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "ignore-" + message.getGuild().getId());
         JsonArray array = cfg.get().getAsJsonArray("channels");
 
         if (array == null) {
             array = new JsonArray();
         }
 
-        for (TextChannel channel : channels) {
+        for (final TextChannel channel : channels) {
             if (direction == IgnoreDirection.IGNORE) {
                 this.hilda.getCommandManager().addIgnoredChannel(channel.getId());
 
@@ -100,17 +119,13 @@ public class IgnoreCommand extends ChannelCommand {
         cfg.get().add("channels", array);
         cfg.save();
 
-        MessageBuilder mb = new MessageBuilder();
+        final MessageBuilder mb = new MessageBuilder();
 
         mb.append("OK, I'm ").append(direction == IgnoreDirection.IGNORE ? "now" : "no longer").append(" ignoring ");
         mb.append(Util.getChannelsAsString(channels));
         mb.append(".");
 
         mb.buildAll().forEach(m -> message.getChannel().sendMessage(m).queue());
-    }
-
-    private enum IgnoreDirection {
-        IGNORE, UNIGNORE;
     }
 
 }

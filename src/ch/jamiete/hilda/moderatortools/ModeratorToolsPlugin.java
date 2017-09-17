@@ -38,12 +38,19 @@ import ch.jamiete.hilda.plugins.HildaPlugin;
 import net.dv8tion.jda.core.entities.Guild;
 
 public class ModeratorToolsPlugin extends HildaPlugin {
-    private FlowUpdater updater;
+    private final FlowUpdater updater;
 
     public ModeratorToolsPlugin(final Hilda hilda) {
         super(hilda);
 
         this.updater = new FlowUpdater(hilda, this);
+    }
+
+    @Override
+    public void onDisable() {
+        for (final Guild guild : this.getHilda().getBot().getGuilds()) {
+            this.updater.save(guild);
+        }
     }
 
     @Override
@@ -65,12 +72,12 @@ public class ModeratorToolsPlugin extends HildaPlugin {
         this.getHilda().getExecutor().scheduleAtFixedRate(new ChannelDeletionOverseerTask(this.getHilda()), first, 86400000, TimeUnit.MILLISECONDS); // At midnight then every 24 hours
         Hilda.getLogger().info("Purging channel messages in " + Util.getFriendlyTime(first));
 
-        for (Guild guild : this.getHilda().getBot().getGuilds()) {
-            Configuration cfg = this.getHilda().getConfigurationManager().getConfiguration(this, "ignore-" + guild.getId());
-            JsonArray array = cfg.get().getAsJsonArray("channels");
+        for (final Guild guild : this.getHilda().getBot().getGuilds()) {
+            final Configuration cfg = this.getHilda().getConfigurationManager().getConfiguration(this, "ignore-" + guild.getId());
+            final JsonArray array = cfg.get().getAsJsonArray("channels");
 
             if (array != null) {
-                Iterator<JsonElement> iterator = array.iterator();
+                final Iterator<JsonElement> iterator = array.iterator();
 
                 while (iterator.hasNext()) {
                     this.getHilda().getCommandManager().addIgnoredChannel(iterator.next().getAsString());
@@ -84,15 +91,8 @@ public class ModeratorToolsPlugin extends HildaPlugin {
     }
 
     @Override
-    public void onDisable() {
-        for (Guild guild : this.getHilda().getBot().getGuilds()) {
-            this.updater.save(guild);
-        }
-    }
-
-    @Override
     public void save() {
-        for (Guild guild : this.getHilda().getBot().getGuilds()) {
+        for (final Guild guild : this.getHilda().getBot().getGuilds()) {
             this.updater.save(guild);
         }
     }

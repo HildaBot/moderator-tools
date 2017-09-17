@@ -53,7 +53,7 @@ public class UserinfoCommand extends ChannelCommand {
             tocheck.addAll(message.getMentionedUsers());
         }
 
-        for (User user : tocheck) {
+        for (final User user : tocheck) {
             final Member member = message.getGuild().getMember(user);
             final EmbedBuilder eb = new EmbedBuilder();
 
@@ -111,7 +111,7 @@ public class UserinfoCommand extends ChannelCommand {
 
             final long existence = System.currentTimeMillis() - message.getGuild().getCreationTime().toInstant().toEpochMilli();
             final long usertime = System.currentTimeMillis() - member.getJoinDate().toInstant().toEpochMilli();
-            final double percentage = ((double) usertime / (double) existence) * 100D;
+            final double percentage = (double) usertime / (double) existence * 100D;
 
             String value = Util.getFriendlyTime(usertime);
             value += " or \u2248" + Math.round(percentage) + "% of the server's existence.";

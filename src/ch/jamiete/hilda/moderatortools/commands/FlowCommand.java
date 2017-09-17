@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2017 jamietech
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.commands;
 
 import ch.jamiete.hilda.Hilda;
@@ -13,9 +28,9 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 
 public class FlowCommand extends ChannelCommand {
-    private ModeratorToolsPlugin plugin;
+    private final ModeratorToolsPlugin plugin;
 
-    public FlowCommand(Hilda hilda, ModeratorToolsPlugin plugin) {
+    public FlowCommand(final Hilda hilda, final ModeratorToolsPlugin plugin) {
         super(hilda);
 
         this.plugin = plugin;
@@ -27,11 +42,11 @@ public class FlowCommand extends ChannelCommand {
     }
 
     @Override
-    public void execute(Message message, String[] arguments, String label) {
-        Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + message.getGuild().getId());
+    public void execute(final Message message, final String[] arguments, final String label) {
+        final Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + message.getGuild().getId());
 
         if (arguments.length == 0) {
-            MessageBuilder mb = new MessageBuilder();
+            final MessageBuilder mb = new MessageBuilder();
 
             mb.append("Flow messages", Formatting.UNDERLINE).append("\n");
             mb.append("Current flow message configuration", Formatting.ITALICS).append("\n\n");

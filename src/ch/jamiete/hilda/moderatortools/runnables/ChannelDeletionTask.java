@@ -55,7 +55,7 @@ public class ChannelDeletionTask implements Runnable {
 
         while (true) {
             if (this.message != null && System.currentTimeMillis() - this.start <= 15000 && System.currentTimeMillis() - this.last <= 15000) {
-                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm.ss");
+                final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm.ss");
                 sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
                 this.message.editMessage("Channel still being automatically cleared as at " + sdf.format(new Date()) + " GMT+0").queue();
                 this.last = System.currentTimeMillis();
@@ -64,7 +64,7 @@ public class ChannelDeletionTask implements Runnable {
             Hilda.getLogger().fine("Getting 100 messages");
             final List<Message> messages = history.retrievePast(100).complete();
 
-            boolean end = messages.size() < 100;
+            final boolean end = messages.size() < 100;
             messages.removeIf(m -> m.isPinned());
 
             if (messages.isEmpty()) {

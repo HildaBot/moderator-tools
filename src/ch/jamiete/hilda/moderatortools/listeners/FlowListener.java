@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2017 jamietech
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.listeners;
 
 import ch.jamiete.hilda.Hilda;
@@ -12,45 +27,8 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 
 public class FlowListener {
-    private final Hilda hilda;
-    private final ModeratorToolsPlugin plugin;
     public static final String DEFAULT_JOIN = ":arrow_forward: $mention ($username#$discriminator) just joined the server!";
     public static final String DEFAULT_LEAVE = ":arrow_backward: $mention ($username#$discriminator) just left the server!";
-
-    public FlowListener(final Hilda hilda, final ModeratorToolsPlugin plugin) {
-        this.hilda = hilda;
-        this.plugin = plugin;
-    }
-
-    @EventHandler
-    public void onGuildMemberJoin(final GuildMemberJoinEvent event) {
-        Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + event.getGuild().getId());
-        FlowListener.sendMessage(event.getGuild(), FlowListener.compute(cfg.getString("join", FlowListener.DEFAULT_JOIN), event.getMember()));
-    }
-
-    @EventHandler
-    public void onGuildMemberLeave(final GuildMemberLeaveEvent event) {
-        Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + event.getGuild().getId());
-        FlowListener.sendMessage(event.getGuild(), FlowListener.compute(cfg.getString("leave", FlowListener.DEFAULT_LEAVE), event.getMember()));
-    }
-
-    public static void sendMessage(Guild guild, String message) {
-        for (final TextChannel channel : guild.getTextChannels()) {
-            if (channel.getTopic() != null && channel.getTopic().toLowerCase().contains("[flow]")) {
-                channel.sendMessage(message).queue();
-            }
-        }
-    }
-
-    public static String compute(String message, final Member member) {
-        message = message.replaceAll("\\$mention", member.getAsMention());
-        message = message.replaceAll("\\$username", member.getUser().getName());
-        message = message.replaceAll("\\$effective", member.getEffectiveName());
-        message = message.replaceAll("\\$discriminator", member.getUser().getDiscriminator());
-        message = message.replaceAll("\\$id", member.getUser().getId());
-
-        return message;
-    }
 
     public static String compute(String message, final FlowMember member) {
         String mention;
@@ -68,6 +46,45 @@ public class FlowListener {
         message = message.replaceAll("\\$id", member.id);
 
         return message;
+    }
+
+    public static String compute(String message, final Member member) {
+        message = message.replaceAll("\\$mention", member.getAsMention());
+        message = message.replaceAll("\\$username", member.getUser().getName());
+        message = message.replaceAll("\\$effective", member.getEffectiveName());
+        message = message.replaceAll("\\$discriminator", member.getUser().getDiscriminator());
+        message = message.replaceAll("\\$id", member.getUser().getId());
+
+        return message;
+    }
+
+    public static void sendMessage(final Guild guild, final String message) {
+        for (final TextChannel channel : guild.getTextChannels()) {
+            if (channel.getTopic() != null && channel.getTopic().toLowerCase().contains("[flow]")) {
+                channel.sendMessage(message).queue();
+            }
+        }
+    }
+
+    private final Hilda hilda;
+
+    private final ModeratorToolsPlugin plugin;
+
+    public FlowListener(final Hilda hilda, final ModeratorToolsPlugin plugin) {
+        this.hilda = hilda;
+        this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onGuildMemberJoin(final GuildMemberJoinEvent event) {
+        final Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + event.getGuild().getId());
+        FlowListener.sendMessage(event.getGuild(), FlowListener.compute(cfg.getString("join", FlowListener.DEFAULT_JOIN), event.getMember()));
+    }
+
+    @EventHandler
+    public void onGuildMemberLeave(final GuildMemberLeaveEvent event) {
+        final Configuration cfg = this.hilda.getConfigurationManager().getConfiguration(this.plugin, "flow-" + event.getGuild().getId());
+        FlowListener.sendMessage(event.getGuild(), FlowListener.compute(cfg.getString("leave", FlowListener.DEFAULT_LEAVE), event.getMember()));
     }
 
 }

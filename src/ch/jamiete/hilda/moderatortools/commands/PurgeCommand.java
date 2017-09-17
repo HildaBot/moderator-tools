@@ -28,7 +28,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 
 public class PurgeCommand extends ChannelCommand {
-    private Map<Long, String> keys = Collections.synchronizedMap(new HashMap<Long, String>());
+    private final Map<Long, String> keys = Collections.synchronizedMap(new HashMap<Long, String>());
 
     public PurgeCommand(final Hilda hilda) {
         super(hilda);
@@ -46,7 +46,7 @@ public class PurgeCommand extends ChannelCommand {
         }
 
         if (arguments.length == 0) {
-            String id = this.getFreshID();
+            final String id = this.getFreshID();
             this.keys.put(message.getAuthor().getIdLong(), id);
             this.reply(message, "Are you sure you want to purge **the entire history** of this channel? To continue, say `" + CommandManager.PREFIX + label + " " + id + "`");
             return;
@@ -82,7 +82,7 @@ public class PurgeCommand extends ChannelCommand {
         }
 
         synchronized (this.keys) {
-            for (Entry<Long, String> entry : this.keys.entrySet()) {
+            for (final Entry<Long, String> entry : this.keys.entrySet()) {
                 if (entry.getValue().equals(possibleid)) {
                     possibleid = null;
                     continue;
