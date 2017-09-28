@@ -24,6 +24,7 @@ import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.moderatortools.commands.ArchiveCommand;
 import ch.jamiete.hilda.moderatortools.commands.BlankRoleCommand;
+import ch.jamiete.hilda.moderatortools.commands.CheckRolesCommand;
 import ch.jamiete.hilda.moderatortools.commands.ClearCommand;
 import ch.jamiete.hilda.moderatortools.commands.FlowCommand;
 import ch.jamiete.hilda.moderatortools.commands.IgnoreCommand;
@@ -58,6 +59,7 @@ public class ModeratorToolsPlugin extends HildaPlugin {
     public void onEnable() {
         this.getHilda().getCommandManager().registerChannelCommand(new ArchiveCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new BlankRoleCommand(this.getHilda()));
+        this.getHilda().getCommandManager().registerChannelCommand(new CheckRolesCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new ClearCommand(this.getHilda()));
         this.getHilda().getCommandManager().registerChannelCommand(new FlowCommand(this.getHilda(), this));
         this.getHilda().getCommandManager().registerChannelCommand(new IgnoreCommand(this.getHilda(), this));
