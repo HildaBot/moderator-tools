@@ -73,9 +73,7 @@ public class ClearCommand extends ChannelCommand {
             return;
         }
 
-        message.delete().queue();
-
-        this.hilda.getExecutor().execute(new ChannelClearTask(this.hilda, message.getTextChannel(), amount, user));
+        message.delete().reason("I automatically delete some command invocations.").queue(m -> this.hilda.getExecutor().execute(new ChannelClearTask(this.hilda, message.getTextChannel(), amount, user)));
     }
 
 }
