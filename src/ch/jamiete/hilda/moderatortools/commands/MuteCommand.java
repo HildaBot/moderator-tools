@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import ch.jamiete.hilda.Hilda;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -119,9 +120,9 @@ public class MuteCommand extends ChannelCommand {
 
                 if (direction == MuteDirection.MUTE && channel.canTalk(guild.getMember(user))) {
                     if (override == null) {
-                        channel.createPermissionOverride(guild.getMember(user)).setDeny(deny).queue();
+                        channel.createPermissionOverride(guild.getMember(user)).setDeny(deny).reason("I created a mute on " + Util.getName(user) + " (" + user.getId() + ") at the request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ").").queue();
                     } else {
-                        override.getManager().deny(deny).queue();
+                        override.getManager().deny(deny).reason("I created a mute on " + Util.getName(user) + " (" + user.getId() + ") at the request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ").").queue();
                     }
                 }
 
@@ -129,9 +130,9 @@ public class MuteCommand extends ChannelCommand {
                     final List<Permission> denied = override.getDenied();
 
                     if (denied.size() == 2 && denied.containsAll(deny) && override.getAllowed().size() == 0) {
-                        override.delete().queue();
+                        override.delete().reason("I removed a mute on " + Util.getName(user) + " (" + user.getId() + ") at the request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ").").queue();
                     } else {
-                        override.getManager().clear(deny).queue();
+                        override.getManager().clear(deny).reason("I removed the permission overrides that were effecting a mute on " + Util.getName(user) + " (" + user.getId() + ") at the request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ").").queue();
                     }
                 }
             }
