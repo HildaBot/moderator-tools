@@ -20,6 +20,7 @@ import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
 import ch.jamiete.hilda.moderatortools.FlowMember;
 import ch.jamiete.hilda.moderatortools.ModeratorToolsPlugin;
+import java.util.regex.Matcher;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -40,8 +41,8 @@ public class FlowListener {
         }
 
         message = message.replaceAll("\\$mention", mention);
-        message = message.replaceAll("\\$username", member.username);
-        message = message.replaceAll("\\$effective", member.getEffectiveName());
+        message = message.replaceAll("\\$username", Matcher.quoteReplacement(member.username));
+        message = message.replaceAll("\\$effective", Matcher.quoteReplacement(member.getEffectiveName()));
         message = message.replaceAll("\\$discriminator", member.discriminator);
         message = message.replaceAll("\\$id", member.id);
 
@@ -50,8 +51,8 @@ public class FlowListener {
 
     public static String compute(String message, final Member member) {
         message = message.replaceAll("\\$mention", member.getAsMention());
-        message = message.replaceAll("\\$username", member.getUser().getName());
-        message = message.replaceAll("\\$effective", member.getEffectiveName());
+        message = message.replaceAll("\\$username", Matcher.quoteReplacement(member.getUser().getName()));
+        message = message.replaceAll("\\$effective", Matcher.quoteReplacement(member.getEffectiveName()));
         message = message.replaceAll("\\$discriminator", member.getUser().getDiscriminator());
         message = message.replaceAll("\\$id", member.getUser().getId());
 
