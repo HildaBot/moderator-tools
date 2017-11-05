@@ -15,7 +15,6 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.commands;
 
-import java.util.List;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
@@ -25,6 +24,9 @@ import net.dv8tion.jda.core.MessageBuilder.Formatting;
 import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckRolesListCommand extends ChannelSubCommand {
 
@@ -48,10 +50,25 @@ public class CheckRolesListCommand extends ChannelSubCommand {
             mb.append("\n").append("[" + i + "]", Formatting.BLOCK).append(" ");
             mb.append(Util.sanitise(role.getName())).append(": ");
 
-            if (role.getPermissionsRaw() == 0) {
+            boolean permissions = role.getPermissionsRaw() == 0;
+
+            if (permissions) {
                 mb.append("No permissions");
             } else {
                 mb.append("Has permissions", Formatting.UNDERLINE);
+            }
+
+            List<String> abornmal = new ArrayList<>();
+
+            for (TextChannel channel : message.getGuild().getTextChannels()) {
+                if (channel.getPermissionOverride(role) != null) {
+                    abornmal.add("#" + channel.getName());
+                }
+            }
+
+            if (!abornmal.isEmpty()) {
+                mb.append(permissions ? " but " : " and ");
+                mb.append("has override in ").append(Util.getAsList(abornmal));
             }
         }
 
