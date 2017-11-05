@@ -44,7 +44,7 @@ public class BlankRoleCommand extends ChannelCommand {
         }
 
         String name = Util.combineSplit(0, arguments, " ");
-        message.getGuild().getController().createRole().setName(name).setPermissions(0).reason("Created role at request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ")").queue();
+        message.getGuild().getController().createRole().setName(name).setPermissions(0L).reason("Created role at request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ")").queue();
         this.reply(message, "OK, I've just created a role with no permissions named " + name + "!");
     }
 
