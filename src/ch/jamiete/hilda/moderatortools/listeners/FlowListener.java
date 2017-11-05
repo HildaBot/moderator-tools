@@ -16,16 +16,19 @@
 package ch.jamiete.hilda.moderatortools.listeners;
 
 import ch.jamiete.hilda.Hilda;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
 import ch.jamiete.hilda.moderatortools.FlowMember;
 import ch.jamiete.hilda.moderatortools.ModeratorToolsPlugin;
-import java.util.regex.Matcher;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
 
 public class FlowListener {
     public static final String DEFAULT_JOIN = ":arrow_forward: $mention ($username#$discriminator) just joined the server!";
@@ -60,10 +63,23 @@ public class FlowListener {
     }
 
     public static void sendMessage(final Guild guild, final String message) {
+        List<String> failures = new ArrayList<>();
+
         for (final TextChannel channel : guild.getTextChannels()) {
             if (channel.getTopic() != null && channel.getTopic().toLowerCase().contains("[flow]")) {
+                if (!channel.canTalk()) {
+                    failures.add("#" + channel.getName());
+                    continue;
+                }
+
                 channel.sendMessage(message).queue();
             }
+        }
+
+        if (!failures.isEmpty()) {
+            guild.getOwner().getUser().openPrivateChannel().queue(ch -> {
+                ch.sendMessage("I tried to send a flow message to " + Util.getAsList(failures) + " but did not have permission.").queue();
+            }, ignore -> {});
         }
     }
 
