@@ -31,10 +31,10 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 
 public class FlowListener {
-    public static final String DEFAULT_JOIN = ":arrow_forward: $mention ($username#$discriminator) just joined the server!";
-    public static final String DEFAULT_LEAVE = ":arrow_backward: $mention ($username#$discriminator) just left the server!";
+    public static final String DEFAULT_JOIN = ":arrow_forward: $mention ($username#$discriminator) just joined the server! [**$count**]";
+    public static final String DEFAULT_LEAVE = ":arrow_backward: $mention ($username#$discriminator) just left the server! [**$count**]";
 
-    public static String compute(String message, final FlowMember member) {
+    public static String compute(String message, final FlowMember member, final Guild guild) {
         String mention;
 
         if (member.nickname != null) {
@@ -48,6 +48,7 @@ public class FlowListener {
         message = message.replaceAll("\\$effective", Matcher.quoteReplacement(member.getEffectiveName()));
         message = message.replaceAll("\\$discriminator", member.discriminator);
         message = message.replaceAll("\\$id", member.id);
+        message = message.replaceAll("\\$count", String.valueOf(guild.getMemberCache().size()));
 
         return message;
     }
@@ -58,6 +59,7 @@ public class FlowListener {
         message = message.replaceAll("\\$effective", Matcher.quoteReplacement(member.getEffectiveName()));
         message = message.replaceAll("\\$discriminator", member.getUser().getDiscriminator());
         message = message.replaceAll("\\$id", member.getUser().getId());
+        message = message.replaceAll("\\$count", String.valueOf(member.getGuild().getMemberCache().size()));
 
         return message;
     }

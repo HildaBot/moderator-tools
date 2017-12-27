@@ -70,7 +70,7 @@ public class FlowUpdater {
 
                 if (member == null) {
                     differences++;
-                    FlowListener.sendMessage(guild, FlowListener.compute(cfg.getString("leave", FlowListener.DEFAULT_LEAVE), putative));
+                    FlowListener.sendMessage(guild, FlowListener.compute(cfg.getString("leave", FlowListener.DEFAULT_LEAVE), putative, guild));
                 }
             }
 

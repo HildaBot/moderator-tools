@@ -55,7 +55,7 @@ public class FlowCommand extends ChannelCommand {
             mb.append("Leave:", Formatting.BOLD).append(" ").append(cfg.getString("leave", "Default.")).append("\n\n");
 
             mb.append("Change these with ").append(CommandManager.PREFIX + label + " <join/leave> <message>", Formatting.BOLD);
-            mb.append(". You can use the following substitutions: $mention $username $effective $discriminator $id. ");
+            mb.append(". You can use the following substitutions: $mention $username $effective $discriminator $id $count. ");
             mb.append("The default use `$mention ($username#$discriminator)`.");
 
             this.reply(message, mb.build());
