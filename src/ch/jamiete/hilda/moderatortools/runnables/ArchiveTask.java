@@ -85,7 +85,7 @@ public class ArchiveTask implements Runnable {
                         line.append("[").append(this.sdf.format(Date.from(message.getCreationTime().toInstant()))).append("] ");
 
                         line.append("<").append(message.getAuthor().getName()).append("#").append(message.getAuthor().getDiscriminator()).append(">");
-                        line.append(" ").append(message.getContent());
+                        line.append(" ").append(message.getContentDisplay());
 
                         if (message.isEdited()) {
                             line.append(" (edited)");
