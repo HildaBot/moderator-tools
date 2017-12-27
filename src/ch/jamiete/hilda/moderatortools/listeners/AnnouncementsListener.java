@@ -25,7 +25,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class AnnouncementsListener {
-    private static final String[] EMOJI = new String[] { "328541211562475521", "328541279526977536", "328541313802698763", "328541333218394122", "328541347776561174", "328541378315419648" };
+    private static final String[] EMOJI = new String[] { "395223528342814732", "395223530637361152", "395223536471638016", "395220773683462145", "395220769174585348", "395223551084331008" };
 
     @EventHandler
     public void onGuildMessageReceived(final GuildMessageReceivedEvent event) {
