@@ -15,6 +15,8 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.commands;
 
+import java.util.ArrayList;
+import java.util.List;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
@@ -25,12 +27,10 @@ import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CheckRolesListCommand extends ChannelSubCommand {
 
-    public CheckRolesListCommand(final Hilda hilda, ChannelSeniorCommand senior) {
+    public CheckRolesListCommand(final Hilda hilda, final ChannelSeniorCommand senior) {
         super(hilda, senior);
 
         this.setName("list");
@@ -39,18 +39,18 @@ public class CheckRolesListCommand extends ChannelSubCommand {
 
     @Override
     public void execute(final Message message, final String[] arguments, final String label) {
-        List<Role> roles = message.getGuild().getRoles();
+        final List<Role> roles = message.getGuild().getRoles();
 
-        MessageBuilder mb = new MessageBuilder();
+        final MessageBuilder mb = new MessageBuilder();
         mb.append("Roles for " + message.getGuild().getName(), Formatting.BOLD).append("\n");
 
         for (int i = 0; i < roles.size(); i++) {
-            Role role = roles.get(i);
+            final Role role = roles.get(i);
 
             mb.append("\n").append("[" + i + "]", Formatting.BLOCK).append(" ");
             mb.append(Util.sanitise(role.getName())).append(": ");
 
-            boolean permissions = role.getPermissionsRaw() == 0;
+            final boolean permissions = role.getPermissionsRaw() == 0;
 
             if (permissions) {
                 mb.append("No permissions");
@@ -58,9 +58,9 @@ public class CheckRolesListCommand extends ChannelSubCommand {
                 mb.append("Has permissions", Formatting.UNDERLINE);
             }
 
-            List<String> abornmal = new ArrayList<>();
+            final List<String> abornmal = new ArrayList<>();
 
-            for (TextChannel channel : message.getGuild().getTextChannels()) {
+            for (final TextChannel channel : message.getGuild().getTextChannels()) {
                 if (channel.getPermissionOverride(role) != null) {
                     abornmal.add("#" + channel.getName());
                 }

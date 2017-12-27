@@ -30,11 +30,15 @@ import net.dv8tion.jda.core.entities.Role;
 public class CheckRolesFixCommand extends ChannelSubCommand {
     private final String USAGE = "You must specify the role Hilda IDs to null permissions for. These can be obtained with the `list` subcommand. You can give a single role, roles separated by commas (without spaces) or a range. For example, `1,3-5,7`.";
 
-    public CheckRolesFixCommand(final Hilda hilda, ChannelSeniorCommand senior) {
+    public CheckRolesFixCommand(final Hilda hilda, final ChannelSeniorCommand senior) {
         super(hilda, senior);
 
         this.setName("fix");
         this.setDescription("Removes all permissions for certain roles.");
+    }
+
+    private void error(final Message message, final String text) {
+        this.reply(message, "I couldn't interpret your numbers. " + text + "\n" + this.USAGE);
     }
 
     @Override
@@ -44,9 +48,9 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
             return;
         }
 
-        List<Integer> sought = new ArrayList<Integer>();
+        final List<Integer> sought = new ArrayList<Integer>();
 
-        for (String bit : arguments[0].split(",")) {
+        for (final String bit : arguments[0].split(",")) {
             if (bit.equals("")) {
                 continue;
             }
@@ -55,7 +59,7 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
 
             try {
                 num = Integer.valueOf(bit);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // Ignore
             }
 
@@ -74,7 +78,7 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
                 return;
             }
 
-            String[] range = bit.split("-");
+            final String[] range = bit.split("-");
 
             if (range.length != 2) {
                 this.error(message, "A range of numbers may only have one hyphen.");
@@ -86,7 +90,7 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
             try {
                 a = Integer.valueOf(range[0]);
                 b = Integer.valueOf(range[1]);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 this.error(message, "One of your ranges did not have two numbers in it.");
                 return;
             }
@@ -111,7 +115,7 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
             return;
         }
 
-        List<Role> roles = message.getGuild().getRoles();
+        final List<Role> roles = message.getGuild().getRoles();
 
         sought.forEach(i -> {
             if (roles.get(i) == null) {
@@ -120,11 +124,11 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
             }
         });
 
-        MessageBuilder mb = new MessageBuilder();
+        final MessageBuilder mb = new MessageBuilder();
         mb.append("Roles for " + message.getGuild().getName(), Formatting.BOLD).append("\n");
 
-        for (Integer i : sought) {
-            Role role = roles.get(i);
+        for (final Integer i : sought) {
+            final Role role = roles.get(i);
 
             role.getManager().setPermissions(0).reason("Removed permissions at request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ")").queue();
 
@@ -133,10 +137,6 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
         }
 
         mb.buildAll(SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
-    }
-
-    private void error(Message message, String text) {
-        this.reply(message, "I couldn't interpret your numbers. " + text + "\n" + this.USAGE);
     }
 
 }
