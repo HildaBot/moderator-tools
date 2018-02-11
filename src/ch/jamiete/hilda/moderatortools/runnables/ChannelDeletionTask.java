@@ -15,10 +15,6 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.runnables;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 import ch.jamiete.hilda.Hilda;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
@@ -26,6 +22,10 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 public class ChannelDeletionTask implements Runnable {
     private final TextChannel channel;
@@ -72,7 +72,11 @@ public class ChannelDeletionTask implements Runnable {
             }
 
             try {
-                this.channel.deleteMessages(messages).complete();
+                if (messages.size() < 3) {
+                    messages.forEach(m -> m.delete().complete());
+                } else {
+                    this.channel.deleteMessages(messages).complete();
+                }
             } catch (final ErrorResponseException e) {
                 this.channel.sendMessage("I couldn't clear the messages in this channel as they're more than two weeks old. Please re-create the channel to clear the messages.").queue();
                 Hilda.getLogger().info("Given up clearing because channel messages are too old.");
