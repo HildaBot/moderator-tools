@@ -112,7 +112,7 @@ public class MuteCommand extends ChannelCommand {
         for (final User user : affected) {
             for (final TextChannel channel : channels) {
                 if (!guild.getSelfMember().hasPermission(channel, Permission.MANAGE_PERMISSIONS)) {
-                    this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
+                    this.reply(message, "Aborting execution; I need permission to manage permissions in " + channel.getAsMention() + ".");
                     return;
                 }
 
