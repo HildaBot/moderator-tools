@@ -15,10 +15,6 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
@@ -31,6 +27,10 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.PermissionOverride;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MuteCommand extends ChannelCommand {
 
@@ -111,7 +111,7 @@ public class MuteCommand extends ChannelCommand {
 
         for (final User user : affected) {
             for (final TextChannel channel : channels) {
-                if (!guild.getSelfMember().hasPermission(message.getTextChannel(), Permission.MANAGE_PERMISSIONS)) {
+                if (!guild.getSelfMember().hasPermission(channel, Permission.MANAGE_PERMISSIONS)) {
                     this.reply(message, "Aborting execution; I need permission to manage permissions in " + message.getTextChannel().getName() + ".");
                     return;
                 }
