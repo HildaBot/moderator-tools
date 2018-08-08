@@ -18,28 +18,25 @@ package ch.jamiete.hilda.moderatortools.runnables;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Start;
-import ch.jamiete.hilda.runnables.MessageDeletionTask;
+import ch.jamiete.hilda.Util;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.requests.restaction.pagination.MessagePaginationAction;
 
 public class ChannelClearTask implements Runnable {
-    private final Hilda hilda;
     private final TextChannel channel;
     private int amount;
     private final User user;
 
-    public ChannelClearTask(final Hilda hilda, final TextChannel channel, final int amount) {
-        this(hilda, channel, amount, null);
+    public ChannelClearTask(final TextChannel channel, final int amount) {
+        this(channel, amount, null);
     }
 
-    public ChannelClearTask(final Hilda hilda, final TextChannel channel, final int amount, final User user) {
-        this.hilda = hilda;
+    public ChannelClearTask(final TextChannel channel, final int amount, final User user) {
         this.channel = channel;
         this.amount = amount;
         this.user = user;
@@ -89,7 +86,10 @@ public class ChannelClearTask implements Runnable {
                     relevant = relevant.subList(0, this.amount - 1);
                 }
 
-                this.channel.deleteMessages(relevant).complete();
+                if (relevant.size() > 0) {
+                    this.channel.deleteMessages(relevant).complete();
+                }
+
                 this.amount -= relevant.size();
 
                 if (relevant.size() == 0) {
@@ -118,11 +118,7 @@ public class ChannelClearTask implements Runnable {
 
         String response = temp;
 
-        this.channel.sendMessage(response).queue(sent -> {
-            if (response.length() > 32) {
-                this.hilda.getExecutor().schedule(new MessageDeletionTask(sent), 5, TimeUnit.SECONDS);
-            }
-        });
+        this.channel.sendMessage(response).queue(Util.deleteAfter(response.length() < 32 ? 5 : 25));
     }
 
 }
