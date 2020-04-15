@@ -28,12 +28,8 @@ import java.util.List;
 import java.util.logging.Level;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.moderatortools.commands.ArchiveCommand;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageHistory;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.*;
 
 public class ArchiveTask implements Runnable {
     private final ArchiveCommand command;
@@ -82,7 +78,7 @@ public class ArchiveTask implements Runnable {
                     for (final Message message : messages) {
                         final StringBuilder line = new StringBuilder();
 
-                        line.append("[").append(this.sdf.format(Date.from(message.getCreationTime().toInstant()))).append("] ");
+                        line.append("[").append(this.sdf.format(Date.from(message.getTimeCreated().toInstant()))).append("] ");
 
                         line.append("<").append(message.getAuthor().getName()).append("#").append(message.getAuthor().getDiscriminator()).append(">");
                         line.append(" ").append(message.getContentDisplay());
@@ -175,7 +171,8 @@ public class ArchiveTask implements Runnable {
                 if (archive.length() > 5000000) {
                     channel.sendMessage("The archive file was too large to send. Talk to an administrator for a copy.").queue();
                 } else {
-                    channel.sendFile(archive, new MessageBuilder().append("Here is your archive!").build()).queue();
+                    new MessageBuilder().append("Here is your archive!");
+                    channel.sendFile(archive).content("Here's your archive!").queue();
                 }
             }
         } catch (final Exception e) {

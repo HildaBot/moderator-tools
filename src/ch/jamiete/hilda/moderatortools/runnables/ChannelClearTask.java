@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Start;
 import ch.jamiete.hilda.Util;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.requests.restaction.pagination.MessagePaginationAction;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.requests.restaction.pagination.MessagePaginationAction;
 
 public class ChannelClearTask implements Runnable {
     private final TextChannel channel;
@@ -66,10 +66,10 @@ public class ChannelClearTask implements Runnable {
                 Hilda.getLogger().fine("Received list of " + messages.size() + " messages.");
 
             Instant too_old = Instant.now().minus(14, ChronoUnit.DAYS).minus(5, ChronoUnit.MINUTES);
-            if (messages.stream().anyMatch(m -> m.getCreationTime().toInstant().isBefore(too_old))) {
+            if (messages.stream().anyMatch(m -> m.getTimeCreated().toInstant().isBefore(too_old))) {
                 Hilda.getLogger().fine("Messages too old!");
                 old = true;
-                messages = messages.stream().filter(m -> m.getCreationTime().toInstant().isAfter(too_old)).collect(Collectors.toList());
+                messages = messages.stream().filter(m -> m.getTimeCreated().toInstant().isAfter(too_old)).collect(Collectors.toList());
             }
 
             if (messages.isEmpty()) {

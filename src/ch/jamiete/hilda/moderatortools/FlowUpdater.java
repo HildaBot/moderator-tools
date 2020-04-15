@@ -26,8 +26,8 @@ import java.util.logging.Level;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.moderatortools.listeners.FlowListener;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 
 public class FlowUpdater {
     private final Hilda hilda;
@@ -100,7 +100,7 @@ public class FlowUpdater {
         }
 
         try {
-            final List<FlowMember> members = new ArrayList<FlowMember>();
+            final List<FlowMember> members = new ArrayList<>();
 
             for (final Member member : guild.getMembers()) {
                 members.add(new FlowMember(member));

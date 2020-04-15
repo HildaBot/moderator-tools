@@ -18,17 +18,16 @@ package ch.jamiete.hilda.moderatortools.commands;
 import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.text.WordUtils;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
 
 public class ServerinfoCommand extends ChannelCommand {
     private final DateTimeFormatter dtf;
@@ -52,7 +51,7 @@ public class ServerinfoCommand extends ChannelCommand {
         eb.setColor(Color.decode("#008E09"));
 
         eb.addField("Server ID", guild.getId(), false);
-        eb.addField("Server created on", guild.getCreationTime().format(this.dtf), false);
+        eb.addField("Server created on", guild.getTimeCreated().format(this.dtf), false);
         eb.addField("Default text channel", guild.getDefaultChannel().getAsMention(), false);
 
         String channels = "";
@@ -75,45 +74,22 @@ public class ServerinfoCommand extends ChannelCommand {
         eb.addField("Members", members, false);
 
         if (guild.getMembers().size() > 50) {
-            final List<Member> oldest = guild.getMembers().stream().sorted(new Comparator<Member>() {
-
-                @Override
-                public int compare(final Member one, final Member two) {
-                    final long onetime = System.currentTimeMillis() - one.getJoinDate().toInstant().toEpochMilli();
-                    final long twotime = System.currentTimeMillis() - two.getJoinDate().toInstant().toEpochMilli();
-
-                    if (onetime == twotime) {
-                        return 0;
-                    } else if (onetime > twotime) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                }
-
+            final List<Member> oldest = guild.getMembers().stream().sorted((one, two) -> {
+                final long onetime = System.currentTimeMillis() - one.getTimeJoined().toInstant().toEpochMilli();
+                final long twotime = System.currentTimeMillis() - two.getTimeJoined().toInstant().toEpochMilli();
+                return Long.compare(twotime, onetime);
             }).limit(10).collect(Collectors.toList());
-            final List<String> oldestnames = new ArrayList<String>(oldest.size());
+            final List<String> oldestnames = new ArrayList<>(oldest.size());
             oldest.forEach(m -> oldestnames.add(Util.getName(m)));
             eb.addField("Ten oldest members", Util.getAsList(oldestnames), false);
 
-            final List<Member> newest = guild.getMembers().stream().sorted(new Comparator<Member>() {
+            final List<Member> newest = guild.getMembers().stream().sorted((one, two) -> {
+                final long onetime = System.currentTimeMillis() - one.getTimeJoined().toInstant().toEpochMilli();
+                final long twotime = System.currentTimeMillis() - two.getTimeJoined().toInstant().toEpochMilli();
 
-                @Override
-                public int compare(final Member one, final Member two) {
-                    final long onetime = System.currentTimeMillis() - one.getJoinDate().toInstant().toEpochMilli();
-                    final long twotime = System.currentTimeMillis() - two.getJoinDate().toInstant().toEpochMilli();
-
-                    if (onetime == twotime) {
-                        return 0;
-                    } else if (onetime > twotime) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-
+                return Long.compare(onetime, twotime);
             }).limit(10).collect(Collectors.toList());
-            final List<String> newestnames = new ArrayList<String>(newest.size());
+            final List<String> newestnames = new ArrayList<>(newest.size());
             newest.forEach(m -> newestnames.add(Util.getName(m)));
             eb.addField("Ten newest members", Util.getAsList(newestnames), false);
         }

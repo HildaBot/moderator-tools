@@ -16,13 +16,14 @@
 package ch.jamiete.hilda.moderatortools.runnables;
 
 import ch.jamiete.hilda.Hilda;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.MessageBuilder.Formatting;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageHistory;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -64,8 +65,14 @@ public class ChannelDeletionTask implements Runnable {
             Hilda.getLogger().fine("Getting 100 messages");
             final List<Message> messages = history.retrievePast(100).complete();
 
-            final boolean end = messages.size() < 100;
-            messages.removeIf(m -> m.isPinned());
+            boolean end = messages.size() < 100;
+            messages.removeIf(Message::isPinned);
+
+            if (messages.removeIf(m -> m.getTimeCreated().toInstant().isBefore(Instant.now().minus(14, ChronoUnit.DAYS).minus(5, ChronoUnit.MINUTES)))) {
+                this.channel.sendMessage("I couldn't clear the messages in this channel as they're more than two weeks old. Please re-create the channel to clear the messages.").queue();
+                Hilda.getLogger().info("Given up clearing because channel messages are too old.");
+                end = true;
+            }
 
             if (messages.isEmpty()) {
                 break;
@@ -92,11 +99,11 @@ public class ChannelDeletionTask implements Runnable {
 
         final MessageBuilder mb = new MessageBuilder();
 
-        mb.append("This channel's messages were cleared.", Formatting.BOLD);
+        mb.append("This channel's messages were cleared.", MessageBuilder.Formatting.BOLD);
 
         if (this.automatic) {
             mb.append("\n\n");
-            mb.append("I automatically clear messages in this channel at 00:00 UTC every day.", Formatting.ITALICS);
+            mb.append("I automatically clear messages in this channel at 00:00 UTC every day.", MessageBuilder.Formatting.ITALICS);
         }
 
         this.channel.sendMessage(mb.build()).queue();

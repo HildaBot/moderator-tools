@@ -19,17 +19,11 @@ import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.PermissionOverride;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MuteCommand extends ChannelCommand {
@@ -51,14 +45,14 @@ public class MuteCommand extends ChannelCommand {
     }
 
     private enum MuteScope {
-        CHANNEL, SERVER;
+        CHANNEL, SERVER
     }
 
     public MuteCommand(final Hilda hilda) {
         super(hilda);
 
         this.setName("mute");
-        this.setAliases(Arrays.asList(new String[] { "unmute" }));
+        this.setAliases(Collections.singletonList("unmute"));
         this.setDescription("Mutes and unmutes users.");
         this.setMinimumPermission(Permission.MESSAGE_MANAGE);
         this.setTranscend(CommandTranscendLevel.PERMISSION);
@@ -95,11 +89,10 @@ public class MuteCommand extends ChannelCommand {
             return;
         }
 
-        final List<User> affected = new ArrayList<User>();
-        affected.addAll(message.getMentionedUsers().stream().filter(u -> member.canInteract(guild.getMember(u)) && u != member.getUser()).collect(Collectors.toList()));
+        final List<User> affected = message.getMentionedUsers().stream().filter(u -> member.canInteract(guild.getMember(u)) && u != member.getUser()).collect(Collectors.toList());
 
-        final List<TextChannel> channels = new ArrayList<TextChannel>();
-        final List<Permission> deny = Arrays.asList(new Permission[] { Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION });
+        final List<TextChannel> channels = new ArrayList<>();
+        final List<Permission> deny = Arrays.asList(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION);
 
         if (scope == MuteScope.SERVER) {
             channels.addAll(guild.getTextChannels());
@@ -127,7 +120,7 @@ public class MuteCommand extends ChannelCommand {
                 }
 
                 if (direction == MuteDirection.UNMUTE && override != null) {
-                    final List<Permission> denied = override.getDenied();
+                    final EnumSet<Permission> denied = override.getDenied();
 
                     if (denied.size() == 2 && denied.containsAll(deny) && override.getAllowed().size() == 0) {
                         override.delete().reason("I removed a mute on " + Util.getName(user) + " (" + user.getId() + ") at the request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ").").queue();

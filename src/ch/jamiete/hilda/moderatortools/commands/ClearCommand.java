@@ -15,15 +15,15 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.commands;
 
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.StringUtils;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelClearTask;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
 
 public class ClearCommand extends ChannelCommand {
 
@@ -60,7 +60,7 @@ public class ClearCommand extends ChannelCommand {
             return;
         }
 
-        final int amount = Integer.valueOf(args.length == 2 ? args[1] : args[0]);
+        final int amount = Integer.parseInt(args.length == 2 ? args[1] : args[0]);
         final User user = message.getMentionedUsers().stream().findFirst().orElse(null);
 
         if (amount < 2) {

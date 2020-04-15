@@ -21,11 +21,9 @@ import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.MessageBuilder.Formatting;
-import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 
 public class CheckRolesFixCommand extends ChannelSubCommand {
     private final String USAGE = "You must specify the role Hilda IDs to null permissions for. These can be obtained with the `list` subcommand. You can give a single role, roles separated by commas (without spaces) or a range. For example, `1,3-5,7`.";
@@ -125,7 +123,7 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
         });
 
         final MessageBuilder mb = new MessageBuilder();
-        mb.append("Roles for " + message.getGuild().getName(), Formatting.BOLD).append("\n");
+        mb.append("Roles for " + message.getGuild().getName(), MessageBuilder.Formatting.BOLD).append("\n");
 
         for (final Integer i : sought) {
             final Role role = roles.get(i);
@@ -136,7 +134,7 @@ public class CheckRolesFixCommand extends ChannelSubCommand {
             mb.append(Util.sanitise(role.getName())).append(" now has no permissions.");
         }
 
-        mb.buildAll(SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
+        mb.buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
     }
 
 }

@@ -24,11 +24,11 @@ import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandManager;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelDeletionTask;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 
 public class PurgeCommand extends ChannelCommand {
-    private final Map<Long, String> keys = Collections.synchronizedMap(new HashMap<Long, String>());
+    private final Map<Long, String> keys = Collections.synchronizedMap(new HashMap<>());
 
     public PurgeCommand(final Hilda hilda) {
         super(hilda);
@@ -71,26 +71,26 @@ public class PurgeCommand extends ChannelCommand {
         final String numbers = "23456789";
         final Random random = new Random();
 
-        String possibleid = "";
+        StringBuilder possibleid = new StringBuilder();
 
         for (int i = 0; i < 8; i++) {
             if (random.nextBoolean()) {
-                possibleid += String.valueOf(alphabet.charAt(random.nextInt(alphabet.length())));
+                possibleid.append(alphabet.charAt(random.nextInt(alphabet.length())));
             } else {
-                possibleid += String.valueOf(numbers.charAt(random.nextInt(numbers.length())));
+                possibleid.append(numbers.charAt(random.nextInt(numbers.length())));
             }
         }
 
         synchronized (this.keys) {
             for (final Entry<Long, String> entry : this.keys.entrySet()) {
-                if (entry.getValue().equals(possibleid)) {
+                if (entry.getValue().equals(possibleid.toString())) {
                     possibleid = null;
-                    continue;
+                    break;
                 }
             }
         }
 
-        return possibleid == null ? this.getFreshID() : possibleid;
+        return possibleid == null ? this.getFreshID() : possibleid.toString();
     }
 
 }

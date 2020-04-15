@@ -19,14 +19,15 @@ import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.text.WordUtils;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
 
 public class UserinfoCommand extends ChannelCommand {
     private final DateTimeFormatter dtf;
@@ -42,7 +43,7 @@ public class UserinfoCommand extends ChannelCommand {
 
     @Override
     public void execute(final Message message, final String[] arguments, final String label) {
-        final List<User> tocheck = new ArrayList<User>();
+        final List<User> tocheck = new ArrayList<>();
 
         if (arguments.length == 0) {
             tocheck.add(message.getAuthor());
@@ -96,21 +97,45 @@ public class UserinfoCommand extends ChannelCommand {
             eb.addField("Shared servers", String.valueOf(user.getMutualGuilds().size()), false);
             eb.addField("Online status", WordUtils.capitalize(member.getOnlineStatus().toString().toLowerCase().replace("_", "")), false);
 
-            if (member.getGame() != null) {
-                String value = member.getGame().getName();
+            List<Activity> activities = member.getActivities();
+            if (!activities.isEmpty()) {
+                int size = activities.size();
 
-                if (member.getGame().getUrl() != null) {
-                    value = "[" + value + "](" + member.getGame().getUrl() + ")";
+                for (int i = 0; i < size; i++) {
+                    Activity activity = activities.get(i);
+                    String value = activity.getName();
+
+                    if (activity.getUrl() != null)
+                        value = "[" + value + "](" + activity.getUrl() + ")";
+
+                    String name = "Currently ";
+
+                    switch (activity.getType()) {
+                        case CUSTOM_STATUS:
+                            // Don't add any text
+                            break;
+
+                        case DEFAULT:
+                            name += "playing";
+                            break;
+
+                        default:
+                            name += activity.getType().name().toLowerCase();
+                            break;
+                    }
+
+                    if (size > 1)
+                        name += " [" + (i + 1) + "]";
+
+                    eb.addField(name, value, false);
                 }
-
-                eb.addField("Currently playing", value, false);
             }
 
-            eb.addField("Account created on", user.getCreationTime().format(this.dtf) + " GMT", false);
-            eb.addField("Joined server on", member.getJoinDate().format(this.dtf) + " GMT", false);
+            eb.addField("Account created on", user.getTimeCreated().format(this.dtf) + " GMT", false);
+            eb.addField("Joined server on", member.getTimeJoined().format(this.dtf) + " GMT", false);
 
-            final long existence = System.currentTimeMillis() - message.getGuild().getCreationTime().toInstant().toEpochMilli();
-            final long usertime = System.currentTimeMillis() - member.getJoinDate().toInstant().toEpochMilli();
+            final long existence = System.currentTimeMillis() - message.getGuild().getTimeCreated().toInstant().toEpochMilli();
+            final long usertime = System.currentTimeMillis() - member.getTimeJoined().toInstant().toEpochMilli();
             final double percentage = (double) usertime / (double) existence * 100D;
 
             String value = Util.getFriendlyTime(usertime);

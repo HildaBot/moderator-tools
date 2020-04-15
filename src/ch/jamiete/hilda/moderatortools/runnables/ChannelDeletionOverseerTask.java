@@ -17,8 +17,8 @@ package ch.jamiete.hilda.moderatortools.runnables;
 
 import java.util.ArrayList;
 import ch.jamiete.hilda.Hilda;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ChannelDeletionOverseerTask implements Runnable {
     private final Hilda hilda;

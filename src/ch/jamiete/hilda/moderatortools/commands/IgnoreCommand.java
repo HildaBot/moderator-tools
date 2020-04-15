@@ -16,7 +16,7 @@
 package ch.jamiete.hilda.moderatortools.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
@@ -26,14 +26,14 @@ import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.moderatortools.ModeratorToolsPlugin;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class IgnoreCommand extends ChannelCommand {
     private enum IgnoreDirection {
-        IGNORE, UNIGNORE;
+        IGNORE, UNIGNORE
     }
 
     private final ModeratorToolsPlugin plugin;
@@ -44,7 +44,7 @@ public class IgnoreCommand extends ChannelCommand {
         this.plugin = plugin;
 
         this.setName("ignore");
-        this.setAliases(Arrays.asList(new String[] { "unignore" }));
+        this.setAliases(Collections.singletonList("unignore"));
         this.setDescription("Manages ignored channels.");
         this.setMinimumPermission(Permission.ADMINISTRATOR);
         this.setTranscend(CommandTranscendLevel.PERMISSION);
@@ -55,7 +55,7 @@ public class IgnoreCommand extends ChannelCommand {
         if (arguments.length == 1 && arguments[0].equalsIgnoreCase("list")) {
             final MessageBuilder mb = new MessageBuilder();
             final List<String> strings = this.hilda.getCommandManager().getIgnoredChannels();
-            final List<TextChannel> ignored = new ArrayList<TextChannel>();
+            final List<TextChannel> ignored = new ArrayList<>();
 
             for (final String s : strings) {
                 final TextChannel c = message.getGuild().getTextChannelById(s);
@@ -84,7 +84,7 @@ public class IgnoreCommand extends ChannelCommand {
         }
 
         final IgnoreDirection direction = IgnoreDirection.valueOf(label.toUpperCase());
-        final List<TextChannel> channels = new ArrayList<TextChannel>();
+        final List<TextChannel> channels = new ArrayList<>();
 
         if (arguments.length == 0) {
             channels.add(message.getTextChannel());

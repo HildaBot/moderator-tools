@@ -22,12 +22,12 @@ import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.commands.CommandTranscendLevel;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.PermissionOverride;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.PermissionOverride;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 
 public class MuteListCommand extends ChannelCommand {
 
@@ -55,7 +55,7 @@ public class MuteListCommand extends ChannelCommand {
 
         if (message.getMentionedUsers().isEmpty()) {
             for (final TextChannel channel : channels) {
-                final List<User> affected = new ArrayList<User>();
+                final List<User> affected = new ArrayList<>();
 
                 for (final PermissionOverride override : channel.getMemberPermissionOverrides()) {
                     if (override.getDenied().contains(Permission.MESSAGE_WRITE)) {
@@ -73,7 +73,7 @@ public class MuteListCommand extends ChannelCommand {
             }
         } else {
             for (final User user : message.getMentionedUsers()) {
-                final List<TextChannel> affected = new ArrayList<TextChannel>();
+                final List<TextChannel> affected = new ArrayList<>();
 
                 for (final TextChannel channel : channels) {
                     for (final PermissionOverride override : channel.getMemberPermissionOverrides().stream().filter(o -> o.getMember().getUser().equals(user)).collect(Collectors.toList())) {

@@ -18,8 +18,8 @@ package ch.jamiete.hilda.moderatortools.commands;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 
 public class BlankRoleCommand extends ChannelCommand {
 
@@ -44,7 +44,7 @@ public class BlankRoleCommand extends ChannelCommand {
         }
 
         final String name = Util.combineSplit(0, arguments, " ");
-        message.getGuild().getController().createRole().setName(name).setPermissions(0L).reason("Created role at request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ")").queue();
+        message.getGuild().createRole().setName(name).setPermissions(0L).reason("Created role at request of " + Util.getName(message.getAuthor()) + " (" + message.getAuthor().getId() + ")").queue();
         this.reply(message, "OK, I've just created a role with no permissions named " + name + "!");
     }
 

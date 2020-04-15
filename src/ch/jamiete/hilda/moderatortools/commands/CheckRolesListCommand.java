@@ -21,12 +21,10 @@ import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.MessageBuilder.Formatting;
-import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class CheckRolesListCommand extends ChannelSubCommand {
 
@@ -42,12 +40,12 @@ public class CheckRolesListCommand extends ChannelSubCommand {
         final List<Role> roles = message.getGuild().getRoles();
 
         final MessageBuilder mb = new MessageBuilder();
-        mb.append("Roles for " + message.getGuild().getName(), Formatting.BOLD).append("\n");
+        mb.append("Roles for " + message.getGuild().getName(), MessageBuilder.Formatting.BOLD).append("\n");
 
         for (int i = 0; i < roles.size(); i++) {
             final Role role = roles.get(i);
 
-            mb.append("\n").append("[" + i + "]", Formatting.BLOCK).append(" ");
+            mb.append("\n").append("[" + i + "]", MessageBuilder.Formatting.BLOCK).append(" ");
             mb.append(Util.sanitise(role.getName())).append(": ");
 
             final boolean permissions = role.getPermissionsRaw() == 0;
@@ -55,24 +53,24 @@ public class CheckRolesListCommand extends ChannelSubCommand {
             if (permissions) {
                 mb.append("No permissions");
             } else {
-                mb.append("Has permissions", Formatting.UNDERLINE);
+                mb.append("Has permissions", MessageBuilder.Formatting.UNDERLINE);
             }
 
-            final List<String> abornmal = new ArrayList<>();
+            final List<String> abnormal = new ArrayList<>();
 
             for (final TextChannel channel : message.getGuild().getTextChannels()) {
                 if (channel.getPermissionOverride(role) != null) {
-                    abornmal.add("#" + channel.getName());
+                    abnormal.add("#" + channel.getName());
                 }
             }
 
-            if (!abornmal.isEmpty()) {
+            if (!abnormal.isEmpty()) {
                 mb.append(permissions ? " but " : " and ");
-                mb.append("has override in ").append(Util.getAsList(abornmal));
+                mb.append("has override in ").append(Util.getAsList(abnormal));
             }
         }
 
-        mb.buildAll(SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
+        mb.buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
     }
 
 }

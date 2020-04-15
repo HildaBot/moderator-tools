@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
 import ch.jamiete.hilda.moderatortools.runnables.ArchiveTask;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ArchiveCommand extends ChannelCommand {
     private final ArrayList<ArchiveTask> tasks = new ArrayList<ArchiveTask>();

@@ -15,8 +15,8 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools;
 
+import net.dv8tion.jda.api.entities.Member;
 import java.io.Serializable;
-import net.dv8tion.jda.core.entities.Member;
 
 public class FlowMember implements Serializable {
     private static final long serialVersionUID = -1L;

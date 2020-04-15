@@ -15,14 +15,12 @@
  *******************************************************************************/
 package ch.jamiete.hilda.moderatortools.listeners;
 
-import java.util.function.Consumer;
 import ch.jamiete.hilda.Start;
 import ch.jamiete.hilda.events.EventHandler;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class AnnouncementsListener {
     private static final String[] EMOJI = new String[] { "395223528342814732", "395223530637361152", "395223536471638016", "395220773683462145", "395220769174585348", "395223551084331008" };
@@ -52,16 +50,9 @@ public class AnnouncementsListener {
 
     private void trySendPrivately(final User user, final String message) {
         try {
-            user.openPrivateChannel().queue(new Consumer<PrivateChannel>() {
-
-                @Override
-                public void accept(final PrivateChannel channel) {
-                    channel.sendMessage(message).queue();
-                }
-
-            });
+            user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
         } catch (final Exception e) {
-            return;
+            // Ignore
         }
     }
 

@@ -37,7 +37,7 @@ import ch.jamiete.hilda.moderatortools.listeners.AnnouncementsListener;
 import ch.jamiete.hilda.moderatortools.listeners.FlowListener;
 import ch.jamiete.hilda.moderatortools.runnables.ChannelDeletionOverseerTask;
 import ch.jamiete.hilda.plugins.HildaPlugin;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 public class ModeratorToolsPlugin extends HildaPlugin {
     private final FlowUpdater updater;
@@ -81,10 +81,8 @@ public class ModeratorToolsPlugin extends HildaPlugin {
             final JsonArray array = cfg.get().getAsJsonArray("channels");
 
             if (array != null) {
-                final Iterator<JsonElement> iterator = array.iterator();
-
-                while (iterator.hasNext()) {
-                    this.getHilda().getCommandManager().addIgnoredChannel(iterator.next().getAsString());
+                for (JsonElement jsonElement : array) {
+                    this.getHilda().getCommandManager().addIgnoredChannel(jsonElement.getAsString());
                 }
 
                 Hilda.getLogger().info("Ignored " + array.size() + " channels in " + guild.getName());
